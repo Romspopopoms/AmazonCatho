@@ -19,6 +19,14 @@ const Menu = [
     {
         name: 'Contact',
         link: '/contact'
+    },
+    {
+        name: 'AddArticle',
+        link: '/addarticle'
+    },
+    {
+        name: 'AddSubSection',
+        link: '/addsubsection'
     }
 ];
 
