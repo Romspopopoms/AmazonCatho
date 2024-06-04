@@ -22,7 +22,7 @@ const SectionSubsectionForm = () => {
   const handleSectionSubmit = async (e) => {
     e.preventDefault();
     try {
-      var obj = {section: sectionName, subsection: };
+      var obj = {section: sectionName, subsection: ''};
       const response = await fetch('/api/addSousSection', {
           method: 'POST',
           headers: {
