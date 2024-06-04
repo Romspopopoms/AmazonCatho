@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../AuthContext';  // Assurez-vous que le chemin est correct
+import { useAuth } from '../context/AuthContext';  // Assurez-vous que le chemin est correct
 import { useNavigate } from 'react-router-dom';
 
 const AdminLoginForm = () => {
