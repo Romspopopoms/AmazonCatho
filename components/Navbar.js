@@ -6,7 +6,44 @@ import { AiOutlineLogin } from "react-icons/ai";
 import { BiLogOutCircle } from "react-icons/bi";
 import { useState } from 'react';
 import { FiMenu, FiX } from "react-icons/fi";
+<<<<<<< HEAD
 import {Menu, MenuOpen, MenuIfLogged} from "../data/MenuNavbar"
+=======
+
+const Menu = [
+    {
+        name: 'Home',
+        link: '/'
+    },
+    {
+        name: 'About',
+        link: '/about'
+    },
+    {
+        name: 'Contact',
+        link: '/contact'
+    },
+    {
+        name: 'AddArticle',
+        link: '/addarticle'
+    },
+    {
+        name: 'AddSubSection',
+        link: '/addsubsection'
+    }
+];
+
+const MenuOpen = [
+    {
+        name: 'MonProfil',
+        link: '/monprofil'
+    },
+    {
+        name: 'MaBoutique',
+        link: '/maboutique'
+    },
+];
+>>>>>>> 3594b843100c75b77c506734c2b27a0eeeb4186e
 
 export const Navbar = () => {
     const { isLoggedIn, logout } = useAuth();
