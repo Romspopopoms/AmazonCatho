@@ -4,12 +4,12 @@ export const Menu = [
         link: '/'
     },
     {
-        name: 'About',
-        link: '/about'
+        name: 'CréationArticles',
+        link: '/FormArticlesPage'
     },
     {
-        name: 'Contact',
-        link: '/contact'
+        name: 'CréationSections',
+        link: '/FormPageSections'
     }
 ];
 
