@@ -22,7 +22,15 @@ const SectionSubsectionForm = () => {
   const handleSectionSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/sections', { name: sectionName });
+      var obj = {section: sectionName, subsection: };
+      const response = await fetch('/api/addSousSection', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(obj)
+      });      
+      //const res = await axios.post('/api/sections', { name: sectionName });
       setSections([...sections, res.data]);
       setSectionName('');
     } catch (err) {
