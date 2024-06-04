@@ -18,8 +18,6 @@ import Navbar from '../components/Navbar"';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <ArticleProvider>
         <Router>
           <div className="flex flex-col xl:gap-y-12 w-full">
             <Navbar />
@@ -27,8 +25,6 @@ const App = () => {
             <Analytics />
           </div>
         </Router>
-        </ArticleProvider>
-    </AuthProvider>
   );
 }
 
