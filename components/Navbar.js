@@ -6,32 +6,7 @@ import { AiOutlineLogin } from "react-icons/ai";
 import { BiLogOutCircle } from "react-icons/bi";
 import { useState } from 'react';
 import { FiMenu, FiX } from "react-icons/fi";
-
-const Menu = [
-    {
-        name: 'Home',
-        link: '/'
-    },
-    {
-        name: 'About',
-        link: '/about'
-    },
-    {
-        name: 'Contact',
-        link: '/contact'
-    }
-];
-
-const MenuOpen = [
-    {
-        name: 'MonProfil',
-        link: '/monprofil'
-    },
-    {
-        name: 'MaBoutique',
-        link: '/maboutique'
-    },
-];
+import {Menu, MenuOpen, MenuIfLogged} from "../data/MenuNavbar"
 
 export const Navbar = () => {
     const { isLoggedIn, logout } = useAuth();
@@ -39,13 +14,13 @@ export const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <div className="w-full h-16 bg-gray-300 flex justify-between items-center px-8 relative">
+        <div className="w-full h-16 bg-gray-300 flex justify-between items-center px-8 fixed inset-0">
             <div className="flex items-center gap-x-2 flex-shrink-0">
                 <IoLogoAndroid className="size-8" />
                 <h2>Android</h2>
             </div>
             <div className="hidden md:flex flex-1 justify-center">
-                <ul className="flex gap-x-8">
+                <ul className="flex gap-x-8"> 
                     {Menu.map((item, index) => (
                         <li key={index} className="text-black">
                             <Link href={item.link}>
@@ -69,12 +44,14 @@ export const Navbar = () => {
                                 </li>  
                             ))}
                             {isLoggedIn ? (
-                                <div onClick={logout} className='flex self-center'>
+                                <div onClick={logout} className='flex self-center gap-x-2'>
                                     <BiLogOutCircle className='size-8' />
+                                    <p>Deconnexion</p>
                                 </div>
                             ) : (
-                                <Link href="/login" className='flex justify-center'>
+                                <Link href="/login" className='flex justify-center gap-x-2'>
                                     <AiOutlineLogin className='size-8'/>
+                                    <p>Connexion</p>
                                 </Link>
                             )}
                         </ul>
@@ -110,12 +87,14 @@ export const Navbar = () => {
                                     </li>  
                                 ))}
                                 {isLoggedIn ? (
-                                    <div onClick={logout} className='flex self-center'>
+                                    <div onClick={logout} className='flex self-center gap-x-2'>
                                         <BiLogOutCircle className='size-8' />
+                                        <p>Deconnexion</p>
                                     </div>
                                 ) : (
                                     <Link href="/login" className='flex justify-center'>
                                         <AiOutlineLogin className='size-8'/>
+                                        <p>Connexion</p>
                                     </Link>
                                 )}
                             </ul>
