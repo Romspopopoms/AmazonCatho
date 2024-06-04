@@ -1,4 +1,4 @@
-/*import { Pool } from 'pg';
+import { Pool } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
@@ -23,4 +23,4 @@ export default async function handler(req, res) {
         console.error('Database error:', error);
         res.status(500).json({ message: "Internal server error" });
     }
-}*/
+}
