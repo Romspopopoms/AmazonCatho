@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const SectionSubsectionForm = () => {
   const [sectionName, setSectionName] = useState('');
@@ -10,8 +9,9 @@ const SectionSubsectionForm = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const res = await axios.get('/api/sections');
-        setSections(res.data);
+        const res = await fetch('/api/sections');
+        const data = await res.json();
+        setSections(data);
       } catch (err) {
         console.error(err);
       }
@@ -22,17 +22,20 @@ const SectionSubsectionForm = () => {
   const handleSectionSubmit = async (e) => {
     e.preventDefault();
     try {
-      var obj = {section: sectionName, subsection: ''};
-      const res = await fetch('/api/addSousSection', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(obj)
+      const res = await fetch('/api/sections', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: sectionName })
       });
-      //const res = await axios.post('/api/addSousSection', JSON.stringify(obj));
-      setSections([...sections, res.data]);
-      setSectionName('');
+      if (res.ok) {
+        const newSection = await res.json();
+        setSections([...sections, newSection]);
+        setSectionName('');
+      } else {
+        alert('Une erreur est survenue lors de l\'ajout de la section');
+      }
     } catch (err) {
       console.error(err);
       alert('Une erreur est survenue lors de l\'ajout de la section');
@@ -42,9 +45,19 @@ const SectionSubsectionForm = () => {
   const handleSubsectionSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/subsections', { name: subsectionName, sectionId });
-      setSubsectionName('');
-      alert('Sous-section ajoutée avec succès');
+      const res = await fetch('/api/subsections', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: subsectionName, sectionId })
+      });
+      if (res.ok) {
+        setSubsectionName('');
+        alert('Sous-section ajoutée avec succès');
+      } else {
+        alert('Une erreur est survenue lors de l\'ajout de la sous-section');
+      }
     } catch (err) {
       console.error(err);
       alert('Une erreur est survenue lors de l\'ajout de la sous-section');

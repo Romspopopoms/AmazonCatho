@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const ArticleForm = () => {
   const [title, setTitle] = useState('');
@@ -13,11 +12,13 @@ const ArticleForm = () => {
   useEffect(() => {
     const fetchSectionsAndSubsections = async () => {
       try {
-        const sectionsRes = await axios.get('/api/sections');
-        setSections(sectionsRes.data);
+        const sectionsRes = await fetch('/api/sections');
+        const sectionsData = await sectionsRes.json();
+        setSections(sectionsData);
 
-        const subsectionsRes = await axios.get('/api/subsections');
-        setSubsections(subsectionsRes.data);
+        const subsectionsRes = await fetch('/api/subsections');
+        const subsectionsData = await subsectionsRes.json();
+        setSubsections(subsectionsData);
       } catch (err) {
         console.error(err);
       }
@@ -28,13 +29,23 @@ const ArticleForm = () => {
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/articles', { title, description, price, sectionId, subsectionId });
-      alert('Article ajouté avec succès');
-      setTitle('');
-      setDescription('');
-      setPrice('');
-      setSectionId('');
-      setSubsectionId('');
+      const res = await fetch('/api/articles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title, description, price, sectionId, subsectionId })
+      });
+      if (res.ok) {
+        alert('Article ajouté avec succès');
+        setTitle('');
+        setDescription('');
+        setPrice('');
+        setSectionId('');
+        setSubsectionId('');
+      } else {
+        alert('Une erreur est survenue lors de l\'ajout de l\'article');
+      }
     } catch (err) {
       console.error(err);
       alert('Une erreur est survenue lors de l\'ajout de l\'article');

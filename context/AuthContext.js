@@ -1,37 +1,34 @@
-import { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
+
+export function useAuth() {
+    return useContext(AuthContext);
+}
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const login = (username, pass) => {
-    setUser({ username });
-    setPassword(pass);
-    setIsLoggedIn(true);
-  };
+    useEffect(() => {
+        const storedLoggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
+        setIsLoggedIn(storedLoggedInStatus);
+    }, []);
+    
+    const login = () => {
+        localStorage.setItem('isLoggedIn', 'true');
+        setIsLoggedIn(true);
+    };
+    
+    const logout = () => {
+        localStorage.removeItem('isLoggedIn');
+        setIsLoggedIn(false);
+    };
+    console.log("Is Logged In State:", isLoggedIn);
 
-  const logout = () => {
-    setUser(null);
-    setPassword(null);
-    setIsLoggedIn(false);
-  };
 
-  const register = (username, pass) => {
-    setUser({ username });
-    setPassword(pass);
-    setIsLoggedIn(true);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, password, isLoggedIn, login, logout, register }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => {
-  return useContext(AuthContext);
+    return (
+        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
