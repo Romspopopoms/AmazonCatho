@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';  // Assurez-vous que le chemin est correct
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/router';
 
 const AdminLoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAuth();  // Utilisation de useAuth pour accéder à login
-    const navigate = useNavigate();  // Hook pour la navigation
+    const { login } = useAuth();
+    const router = useRouter();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -21,8 +21,8 @@ const AdminLoginForm = () => {
             const data = await response.json();
             if (data.success) {
                 console.log('Connexion réussie');
-                login();  // Met à jour l'état global de connexion
-                navigate('/');  // Redirige vers la page d'accueil
+                login();
+                router.push('/');
             } else {
                 console.error('Échec de la connexion', data.message);
             }

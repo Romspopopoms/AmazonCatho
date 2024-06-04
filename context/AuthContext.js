@@ -23,8 +23,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('isLoggedIn');
         setIsLoggedIn(false);
     };
-    console.log("Is Logged In State:", isLoggedIn);
-
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
