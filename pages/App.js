@@ -1,21 +1,21 @@
-/*import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Analytics } from "@vercel/analytics/react"
-import { AuthProvider } from './AuthContext';
+//import './App.css';
+//import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+//import { SpeedInsights } from '@vercel/speed-insights/react';
+//import { Analytics } from "@vercel/analytics/react"
+//import { AuthProvider } from './AuthContext';
 
-import Home from './pages/Home';
-import Activites from './pages/Activites';
-import Tarifs from './pages/Tarifs';  
-import APropos from './pages/APropos';
+//import Home from './pages/Home';
+//import Activites from './pages/Activites';
+//import Tarifs from './pages/Tarifs';  
+//import APropos from './pages/APropos';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+//import Footer from './components/Footer';
 
-import ArticlePage from './pages/ArticlesPage';
-import AdminPage from './pages/AdminPage';
-import AnalysePage from './pages/AnalysePage';
-import AjoutDarticlesPages from './pages/AjoutD\'articlesPage';
-import { ArticleProvider } from './ArticleContext';
+//import ArticlePage from './pages/ArticlesPage';
+//import AdminPage from './pages/AdminPage';
+//import AnalysePage from './pages/AnalysePage';
+//import AjoutDarticlesPages from './pages/AjoutD\'articlesPage';
+//import { ArticleProvider } from './ArticleContext';
 
 const App = () => {
   return (
@@ -24,7 +24,7 @@ const App = () => {
         <Router>
           <div className="flex flex-col xl:gap-y-12 w-full">
             <Navbar />
-            <Routes>
+            /*<Routes>
               <Route path="/" element={<Home />} />
               <Route path="/activites" element={<Activites />} />
               <Route path="/tarifs" element={<Tarifs />} />
@@ -38,7 +38,7 @@ const App = () => {
             </Routes>
             <Footer />
             <SpeedInsights />
-            <Analytics />
+            <Analytics />*/
           </div>
         </Router>
         </ArticleProvider>
@@ -46,4 +46,4 @@ const App = () => {
   );
 }
 
-export default App;*/
+export default App;
