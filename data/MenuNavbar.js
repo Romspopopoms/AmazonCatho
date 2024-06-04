@@ -9,7 +9,7 @@ export const Menu = [
     },
     {
         name: 'CréationSections',
-        link: '/FormPageSections'
+        link: '/FormPageSection'
     }
 ];
 
