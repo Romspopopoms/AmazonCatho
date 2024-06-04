@@ -23,14 +23,14 @@ const SectionSubsectionForm = () => {
     e.preventDefault();
     try {
       var obj = {section: sectionName, subsection: ''};
-      const response = await fetch('/api/addSousSection', {
+      /*const response = await fetch('/api/addSousSection', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify(obj)
-      });      
-      //const res = await axios.post('/api/sections', { name: sectionName });
+      });  */    
+      const res = await axios.post('/api/addSousSection', JSON.stringify(obj));
       setSections([...sections, res.data]);
       setSectionName('');
     } catch (err) {
