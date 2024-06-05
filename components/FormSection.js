@@ -11,6 +11,7 @@ const SectionSubsectionForm = () => {
       try {
         const res = await fetch('/api/getSection');
         const data = await res.json();
+        console.log('debugsection:', data);
         setSections(data);
       } catch (err) {
         console.error(err);
