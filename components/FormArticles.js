@@ -35,7 +35,6 @@ const ArticleForm = () => {
         setTitle('');
         setDescription('');
         setPrice('');
-        setSectionId('');
         setSubsectionId('');
       } else {
         alert('Une erreur est survenue lors de l\'ajout de l\'article');
@@ -75,10 +74,10 @@ const ArticleForm = () => {
           onChange={(e) => setSubsectionId(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Sélectionnez une sous-section</option>
-          {subsections.filter(subsection => subsection.section_id === sectionId).map((subsection) => (
+          <option value="">Sélectionnez une section</option>
+          {subsections.map((subsection) => (
             <option key={subsection.id} value={subsection.id}>
-              {subsection.name}
+              {subsection.subsection}
             </option>
           ))}
         </select>
