@@ -36,7 +36,7 @@ const ArticleForm = () => {
     
     try {
       //add blob
-      const apiKey = process.env.BLOB_READ_WRITE_TOKEN;
+      const apiKey = process.env.BLOB_TOKEN;
       alert(apiKey)
       if (imageFile) {
           const blob = await put(title, imageFile, { access: 'public', token: apiKey });
