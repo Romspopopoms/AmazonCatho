@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const query = 'SELECT * FROM articles';
+        const query = 'SELECT id, title, description, price, section, subsection FROM articles';
         const { rows } = await pool.query(query);
         res.status(200).json(rows);
     } catch (error) {
