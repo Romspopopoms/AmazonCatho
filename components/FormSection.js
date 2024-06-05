@@ -96,7 +96,7 @@ const SectionSubsectionForm = () => {
           <option value="">Sélectionnez une section</option>
           {sections.map((section) => (
             <option key={section.id} value={section.id}>
-              {section.name}
+              {section.section}
             </option>
           ))}
         </select>
