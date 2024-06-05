@@ -8,6 +8,7 @@ const ArticleForm = () => {
   const [subsection, setSubsection] = useState('');
   const [sections, setSections] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchSections = async () => {
