@@ -24,7 +24,7 @@ const ArticleForm = () => {
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/articles', {
+      const res = await fetch('/api/addArticles', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
