@@ -37,13 +37,12 @@ const ArticleForm = () => {
     try {
       //add blob
       const apiKey = process.env.BLOB_TOKEN;
-      alert(apiKey)
+      var fileurl = ""
       if (imageFile) {
           const blob = await put(title, imageFile, { access: 'public', token: "vercel_blob_rw_s4TyBQ5DfffM3JDe_Z2HiBFDcrz9YY2dZlZQBhGKjdYXf9o" });
           const retour = JSON.stringify(blob);
           const datablob = JSON.parse(retour);
-        
-          console.log('Debug blob:', datablob.url);
+          fileurl = datablob.url;
       }
       //add blob
       const res = await fetch('/api/addArticle', {
@@ -51,7 +50,7 @@ const ArticleForm = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ title, description, price, section, subsection })
+        body: JSON.stringify({ title, description, price, section, subsection, fileurl })
       });
       if (res.ok) {
         alert('Article ajouté avec succès');
