@@ -12,7 +12,6 @@ export default async function handler(req, res) {
     
     const { section, subsection} = req.body;
     try {
-        const embedUrl = convertToEmbedURL(videoUrl);
         const query = 'INSERT INTO section (section, subsection) VALUES ($1, $2) RETURNING *';
         const params = [section, subsection];
         const { rows } = await pool.query(query, params);
