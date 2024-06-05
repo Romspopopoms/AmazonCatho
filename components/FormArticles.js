@@ -7,6 +7,7 @@ const ArticleForm = () => {
   const [section, setSection] = useState('');
   const [subsection, setSubsection] = useState('');
   const [sections, setSections] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const fetchSections = async () => {
@@ -20,7 +21,13 @@ const ArticleForm = () => {
     };
     fetchSections();
   }, []);
-
+  
+  const handleImageChange = (e) => {
+        if (e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+        }
+  };
+  
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -71,6 +78,12 @@ const ArticleForm = () => {
           onChange={(e) => setPrice(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <input 
+          type="file" 
+            onChange={handleImageChange} 
+              disabled={loading} 
+              className='file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-yellow-600 hover:file:bg-violet-100'
+        /> 
         <select 
           value={section} 
           onChange={(e) => setSection(e.target.value)}
