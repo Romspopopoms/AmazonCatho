@@ -4,20 +4,21 @@ const ArticleForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [subsectionId, setSubsectionId] = useState('');
-  const [subsections, setSubsections] = useState([]);
+  const [section, setSection] = useState('');
+  const [subsection, setSubsection] = useState('');
+  const [sections, setSections] = useState([]);
 
   useEffect(() => {
-    const fetchSubsections = async () => {
+    const fetchSections = async () => {
       try {
-        const subsectionsRes = await fetch('/api/getSubSection');
-        const subsectionsData = await subsectionsRes.json();
-        setSubsections(subsectionsData);
+        const res = await fetch('/api/getSection');
+        const data = await res.json();
+        setSections(data);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchSubsections();
+    fetchSections();
   }, []);
 
   const handleArticleSubmit = async (e) => {
@@ -28,14 +29,15 @@ const ArticleForm = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ title, description, price, sectionId, subsectionId })
+        body: JSON.stringify({ title, description, price, section, subsection })
       });
       if (res.ok) {
         alert('Article ajouté avec succès');
         setTitle('');
         setDescription('');
         setPrice('');
-        setSubsectionId('');
+        setSection('');
+        setSubsection('');
       } else {
         alert('Une erreur est survenue lors de l\'ajout de l\'article');
       }
@@ -70,14 +72,26 @@ const ArticleForm = () => {
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <select 
-          value={subsectionId} 
-          onChange={(e) => setSubsectionId(e.target.value)}
+          value={section} 
+          onChange={(e) => setSection(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Sélectionnez une section</option>
-          {subsections.map((subsection) => (
-            <option key={subsection.id} value={subsection.id}>
-              {subsection.subsection}
+          {sections.map((section) => (
+            <option key={section.name} value={section.name}>
+              {section.name}
+            </option>
+          ))}
+        </select>
+        <select 
+          value={subsection} 
+          onChange={(e) => setSubsection(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Sélectionnez une sous-section</option>
+          {sections.find(s => s.name === section)?.subsections.map((sub) => (
+            <option key={sub} value={sub}>
+              {sub}
             </option>
           ))}
         </select>
