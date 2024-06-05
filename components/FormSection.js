@@ -9,7 +9,7 @@ const SectionSubsectionForm = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const res = await fetch('/api/sections');
+        const res = await fetch('/api/getSection');
         const data = await res.json();
         setSections(data);
       } catch (err) {
