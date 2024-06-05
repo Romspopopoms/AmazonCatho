@@ -42,8 +42,6 @@ const ArticleForm = () => {
           const retour = JSON.stringify(blob);
           const datablob = JSON.parse(retour);
           console.log('Debug blob:', datablob.url);
-          //const key = "imageUrl";
-          //obj[key] = datablob.url ;
       }
       //add blob
       const res = await fetch('/api/addArticle', {
