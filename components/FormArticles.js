@@ -41,6 +41,7 @@ const ArticleForm = () => {
           const blob = await put(title, imageFile, { access: 'public', token: apiKey });
           const retour = JSON.stringify(blob);
           const datablob = JSON.parse(retour);
+        
           console.log('Debug blob:', datablob.url);
       }
       //add blob
