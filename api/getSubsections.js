@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const query = 'SELECT * FROM sections';
+        const query = 'SELECT * FROM subsections';
         const { rows } = await pool.query(query);
         res.status(200).json(rows);
     } catch (error) {
