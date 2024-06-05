@@ -20,7 +20,7 @@ export const Menu = [
 export const MenuOpen = [
     {
         name: 'Faq',
-        link: '/faq'
+        link: '/faq' 
     },
 ];
 
