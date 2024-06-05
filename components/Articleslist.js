@@ -7,7 +7,7 @@ const ArticlesList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const articlesRes = await fetch('/api/getArticles');
+        const articlesRes = await fetch('/api/articles');
         const articlesData = await articlesRes.json();
         setArticles(articlesData);
 
