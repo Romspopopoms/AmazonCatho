@@ -11,7 +11,6 @@ const SectionSubsectionForm = () => {
       try {
         const res = await fetch('/api/getSection');
         const data = await res.json();
-        console.log('debugsection:', data);
         setSections(data);
       } catch (err) {
         console.error(err);
@@ -46,6 +45,7 @@ const SectionSubsectionForm = () => {
   const handleSubsectionSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('debugsection, section ID:', sectionId);
       const res = await fetch('/api/subsections', {
         method: 'POST',
         headers: {
