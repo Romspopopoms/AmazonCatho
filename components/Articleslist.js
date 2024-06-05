@@ -7,11 +7,17 @@ const ArticlesList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const articlesRes = await fetch('/api/articles');
+        const articlesRes = await fetch('/api/getArticles');
+        if (!articlesRes.ok) {
+          throw new Error(`Failed to fetch articles: ${articlesRes.statusText}`);
+        }
         const articlesData = await articlesRes.json();
         setArticles(articlesData);
 
         const sectionsRes = await fetch('/api/getSection');
+        if (!sectionsRes.ok) {
+          throw new Error(`Failed to fetch sections: ${sectionsRes.statusText}`);
+        }
         const sectionsData = await sectionsRes.json();
         setSections(sectionsData);
       } catch (err) {
