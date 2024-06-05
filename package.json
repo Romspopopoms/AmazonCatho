@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
     "axios": "^1.7.2",
+    "@vercel/blob": "^0.23.2",
     "bcryptjs": "^2.4.3",
     "next": "14.2.3",
     "pg": "^8.12.0",
