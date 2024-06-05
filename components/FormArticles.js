@@ -4,26 +4,20 @@ const ArticleForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [sectionId, setSectionId] = useState('');
   const [subsectionId, setSubsectionId] = useState('');
-  const [sections, setSections] = useState([]);
   const [subsections, setSubsections] = useState([]);
 
   useEffect(() => {
-    const fetchSectionsAndSubsections = async () => {
+    const fetchSubsections = async () => {
       try {
-        const sectionsRes = await fetch('/api/sections');
-        const sectionsData = await sectionsRes.json();
-        setSections(sectionsData);
-
-        const subsectionsRes = await fetch('/api/subsections');
+        const subsectionsRes = await fetch('/api/getSubSection');
         const subsectionsData = await subsectionsRes.json();
         setSubsections(subsectionsData);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchSectionsAndSubsections();
+    fetchSubsections();
   }, []);
 
   const handleArticleSubmit = async (e) => {
@@ -76,18 +70,6 @@ const ArticleForm = () => {
           onChange={(e) => setPrice(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <select 
-          value={sectionId} 
-          onChange={(e) => setSectionId(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Sélectionnez une section</option>
-          {sections.map((section) => (
-            <option key={section.id} value={section.id}>
-              {section.name}
-            </option>
-          ))}
-        </select>
         <select 
           value={subsectionId} 
           onChange={(e) => setSubsectionId(e.target.value)}
