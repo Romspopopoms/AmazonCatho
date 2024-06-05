@@ -45,13 +45,12 @@ const SectionSubsectionForm = () => {
   const handleSubsectionSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('debugsection, section ID:', sectionId);
-      const res = await fetch('/api/subsections', {
+      const res = await fetch('/api/addSousSection', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: subsectionName, sectionId })
+        body: JSON.stringify({ section: subsectionName, subsection: sectionId })
       });
       if (res.ok) {
         setSubsectionName('');
