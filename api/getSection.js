@@ -1,4 +1,4 @@
-/*import { Pool } from 'pg';
+import { Pool } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
@@ -15,12 +15,12 @@ export default async function handler(req, res) {
 
     try {
         console.log('Querying database for articles');
-        const query = 'SELECT * FROM articles';
+        const query = 'SELECT distinct section FROM section';
         const { rows } = await pool.query(query);
-        console.log('Articles retrieved:', rows);
+        console.log('Sections retrieved:', rows);
         res.status(200).json(rows);
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({ message: "Internal server error" });
     }
-}*/
+}
