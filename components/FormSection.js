@@ -50,7 +50,7 @@ const SectionSubsectionForm = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ section: subsectionName, subsection: sectionId })
+        body: JSON.stringify({ section: sectionId, subsection: subsectionName })
       });
       if (res.ok) {
         setSubsectionName('');
