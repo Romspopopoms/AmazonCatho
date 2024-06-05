@@ -10,6 +10,10 @@ export const Menu = [
     {
         name: 'CréationSections',
         link: '/FormPageSection'
+    },
+    {
+        name: 'ArticlesPage',
+        link: '/ArticlesPage'
     }
 ];
 
