@@ -31,7 +31,20 @@ const ArticleForm = () => {
   
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    
     try {
+      //add blob
+      const apiKey = process.env.REACT_APP_BLOB_KEY;
+      if (imageFile) {
+          const blob = await put(title, imageFile, { access: 'public', token: apiKey });
+          const retour = JSON.stringify(blob);
+          const datablob = JSON.parse(retour);
+          console.log('Debug blob:', datablob.url);
+          //const key = "imageUrl";
+          //obj[key] = datablob.url ;
+      }
+      //add blob
       const res = await fetch('/api/addArticle', {
         method: 'POST',
         headers: {
@@ -46,6 +59,7 @@ const ArticleForm = () => {
         setPrice('');
         setSection('');
         setSubsection('');
+        setLoading(false);
       } else {
         alert('Une erreur est survenue lors de l\'ajout de l\'article');
       }
