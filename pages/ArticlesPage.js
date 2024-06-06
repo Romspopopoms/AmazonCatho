@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavbarSection from '../components/NavbarSection';
 import ArticlesList from '../components/Articleslist';
 
-const HomePage = () => {
+const ArticlesPage = () => {
   const [sections, setSections] = useState([]);
   const [selectedSubsection, setSelectedSubsection] = useState('');
 
@@ -34,4 +34,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default ArticlesPage;
