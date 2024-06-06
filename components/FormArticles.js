@@ -23,28 +23,26 @@ const ArticleForm = () => {
     };
     fetchSections();
   }, []);
-  
+
   const handleImageChange = (e) => {
-        if (e.target.files[0]) {
-            setImageFile(e.target.files[0]);
-        }
+    if (e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
   };
-  
+
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      //add blob
-      const apiKey = process.env.BLOB_TOKEN;
-      var fileurl = ""
+      let fileurl = "";
       if (imageFile) {
-          const blob = await put(title, imageFile, { access: 'public', token: "vercel_blob_rw_s4TyBQ5DfffM3JDe_Z2HiBFDcrz9YY2dZlZQBhGKjdYXf9o" });
-          const retour = JSON.stringify(blob);
-          const datablob = JSON.parse(retour);
-          fileurl = datablob.url;
+        const blob = await put(title, imageFile, { access: 'public', token: process.env.BLOB_TOKEN });
+        const retour = JSON.stringify(blob);
+        const datablob = JSON.parse(retour);
+        fileurl = datablob.url;
       }
-      //add blob
+
       const res = await fetch('/api/addArticle', {
         method: 'POST',
         headers: {
@@ -52,6 +50,7 @@ const ArticleForm = () => {
         },
         body: JSON.stringify({ title, description, price, section, subsection, fileurl })
       });
+
       if (res.ok) {
         alert('Article ajouté avec succès');
         setTitle('');
@@ -59,13 +58,16 @@ const ArticleForm = () => {
         setPrice('');
         setSection('');
         setSubsection('');
+        setImageFile(null);
         setLoading(false);
       } else {
-        alert('Une erreur est survenue lors de l\'ajout de l\'article');
+        const errorData = await res.json();
+        alert(`Une erreur est survenue: ${errorData.message}`);
       }
     } catch (err) {
       console.error(err);
       alert('Une erreur est survenue lors de l\'ajout de l\'article');
+      setLoading(false);
     }
   };
 
@@ -95,10 +97,10 @@ const ArticleForm = () => {
         />
         <input 
           type="file" 
-            onChange={handleImageChange} 
-              disabled={loading} 
-              className='file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-yellow-600 hover:file:bg-violet-100'
-        /> 
+          onChange={handleImageChange} 
+          disabled={loading} 
+          className='file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-yellow-600 hover:file:bg-violet-100'
+        />
         <select 
           value={section} 
           onChange={(e) => setSection(e.target.value)}
