@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 
 const ArticlesList = ({ selectedSubsection }) => {
   const [articles, setArticles] = useState([]);
@@ -28,11 +27,9 @@ const ArticlesList = ({ selectedSubsection }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredArticles.map((article) => (
           <div key={article.id} className="bg-white p-4 rounded-lg shadow-lg">
-            <Image
+            <img
               src={article.imageurl}
               alt={article.title}
-              width={500}
-              height={500}
               className="w-full h-48 object-cover mb-4 rounded-lg"
             />
             <h3 className="text-xl font-semibold mb-2">{article.title}</h3>

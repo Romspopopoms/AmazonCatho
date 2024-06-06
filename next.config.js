@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-      domains: ['vercel.app', 'amazon-catho.vercel.app'], // Ajoutez les domaines nécessaires ici
+      domains: ['vercel.app', 'vercelusercontent.com', 'amazon-catho.vercel.app'], // Ajoutez les domaines nécessaires ici
     },
   };
   
