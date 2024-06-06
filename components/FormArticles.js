@@ -37,7 +37,7 @@ const ArticleForm = () => {
     try {
       let fileurl = "";
       if (imageFile) {
-        const blob = await put(title, imageFile, { access: 'public', token: process.env.BLOB_TOKEN });
+        const blob = await put(title, imageFile, { access: 'public', token: 'vercel_blob_rw_s4TyBQ5DfffM3JDe_Z2HiBFDcrz9YY2dZlZQBhGKjdYXf9o' });
         const retour = JSON.stringify(blob);
         const datablob = JSON.parse(retour);
         fileurl = datablob.url;
