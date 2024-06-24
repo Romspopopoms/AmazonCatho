@@ -27,6 +27,10 @@ const ChatGPT = () => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       const botMessage = { role: 'bot', content: data.choices[0].text.trim() };
       setMessages([...messages, newMessage, botMessage]);
