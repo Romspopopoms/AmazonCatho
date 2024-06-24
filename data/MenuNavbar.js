@@ -1,19 +1,19 @@
 export const Menu = [
     {
-        name: 'Home',
-        link: '/'
+        name: 'Génération de texte',
+        link: '/GenerationTexte'
     },
     {
-        name: 'CréationArticles',
-        link: '/FormArticlesPage'
+        name: "Génération d'Image",
+        link: '/GenerationImage'
     },
     {
-        name: 'CréationSections',
-        link: '/FormPageSection'
+        name: "Génération de Voix",
+        link: '/GenerationVoix'
     },
     {
-        name: 'ArticlesPage',
-        link: '/ArticlesPage'
+        name: 'Programmer vos postes',
+        link: '/ProgrammerVosPostes'
     }
 ];
 

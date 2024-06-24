@@ -17,7 +17,7 @@ export const Navbar = () => {
         <nav className="w-full h-16 bg-gray-800 text-white flex justify-between items-center px-8 fixed inset-0 z-50">
             <div className="flex items-center gap-x-2">
                 <IoLogoAndroid className="text-2xl" />
-                <h2 className="text-lg font-bold">Android</h2>
+                <h2 className="text-lg font-bold">RomsSaaS</h2>
             </div>
             <div className="hidden md:flex flex-1 justify-center">
                 <ul className="flex gap-x-8">
