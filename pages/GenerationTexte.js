@@ -1,10 +1,10 @@
 import React from "react";
-import CHAT from "../components/ChatGPT";
+import ChatGPT from "../components/ChatGPT";
 
 const ChatTexte = () => {
   return (
-    <div className="relative flex flex-col items-center justify-center mt-40 xl:mt-28 gap-y-8 ">
-    <CHAT />
+    <div className="relative flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black">
+      <ChatGPT />
     </div>
   );
 };
