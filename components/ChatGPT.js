@@ -51,7 +51,7 @@ const ChatGPT = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white">
-      <div className="w-1/4 p-4 border-r border-gray-700">
+      <div className="w-3/4 p-4 border-r border-gray-700 mt-16">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Conversations</h2>
           <button onClick={startNewConversation} className="text-blue-500 hover:text-blue-600">
