@@ -18,12 +18,11 @@ const ChatGPT = () => {
     setLoading(true);
 
     try {
-      const apiKey = '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'; // Remplacez par votre clé API
       const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          'Authorization': `Bearer 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`,
         },
         body: JSON.stringify({
           prompt: input,
