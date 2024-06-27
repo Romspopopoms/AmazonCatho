@@ -18,16 +18,12 @@ const ChatGPT = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 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`,
         },
-        body: JSON.stringify({
-          prompt: input,
-          max_tokens: 150,
-        }),
+        body: JSON.stringify({ message: input }),
       });
 
       if (!response.ok) {
@@ -35,7 +31,7 @@ const ChatGPT = () => {
       }
 
       const data = await response.json();
-      const botMessage = { role: 'bot', content: data.choices[0].text.trim() };
+      const botMessage = { role: 'bot', content: data.response };
       setMessages([...messages, newMessage, botMessage]);
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
