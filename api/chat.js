@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
 
-const apiKey = process.env.OPENAI_API_KEY || "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"
+const apiKey = process.env.OPENAI_API_KEY || "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"
 
 const openai = new OpenAI({
   apiKey: apiKey,
