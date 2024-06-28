@@ -5,7 +5,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 const ChatGPT = () => {
   const [input, setInput] = useState('');
   const [platform, setPlatform] = useState('Instagram'); // Par défaut sur Instagram
-  const [messages, setMessages] = useState([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
 
@@ -44,7 +44,7 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    setMessages([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
+    setMessages([]);
   };
 
   return (
