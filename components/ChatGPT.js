@@ -142,7 +142,7 @@ const ChatGPT = () => {
         </form>
       </div>
       {profile && (
-        <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-800">
+        <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
           <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
           <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
