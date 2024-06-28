@@ -23,7 +23,7 @@ const DisplayProfile = ({ profile }) => {
     <div className="p-4 bg-gray-800 rounded-lg w-full max-w-md">
       <h2 className="text-2xl text-white mb-4">Profil Utilisateur</h2>
       <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
-      <p className="text-white mb-2"><strong>Type d&apos;ctivité:</strong> {profile.activitytype}</p>
+      <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
       {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
       <p className="text-white mb-2"><strong>Public cible:</strong> {targetAudience.join(', ')}</p>
       <p className="text-white mb-2"><strong>Objectifs:</strong> {goals.join(', ')}</p>
