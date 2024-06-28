@@ -23,7 +23,7 @@ export default function Profile() {
       };
       loadProfile();
     }
-  }, [isLoggedIn, router, fetchProfile]);
+  }, [isLoggedIn, fetchProfile, router]);
 
   if (!isLoggedIn || loading) {
     return null; // Ne rend rien si l'utilisateur n'est pas connecté ou si le profil est en cours de chargement

@@ -22,7 +22,8 @@ export default async function handler(req, res) {
     const result = await pool.query(query, params);
 
     if (result.rows.length > 0) {
-      return res.status(200).json({ success: true, profile: result.rows[0] });
+      const profile = result.rows[0];
+      return res.status(200).json({ success: true, profile });
     } else {
       return res.status(404).json({ success: false, message: "Profile not found" });
     }
