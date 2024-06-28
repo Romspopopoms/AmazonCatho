@@ -16,7 +16,7 @@ export default function Profile() {
     if (!isLoggedIn) {
       router.push('/AdminPage'); // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
     } else {
-      const userId = 2; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
+      const userId = 3; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
       const loadProfile = async () => {
         await fetchProfile(userId); // Récupère le profil utilisateur
         setLoading(false);
