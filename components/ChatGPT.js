@@ -14,7 +14,7 @@ const ChatGPT = () => {
 
   useEffect(() => {
     if (profile) {
-      const introMessage = `Bonjour ${profile.name}! Je vois que vous avez une entreprise de type ${profile.businessType} et que vous ciblez ${profile.targetAudience}. Quels sont vos objectifs actuels pour vos réseaux sociaux?`;
+      const introMessage = `Bonjour ${profile.name}! Je vois que vous avez une activité de type ${profile.activityType} avec la sous-activité ${profile.subActivityType}. Vous ciblez ${profile.targetAudience.join(', ')} et vous avez les objectifs suivants : ${profile.goals.join(', ')}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setMessages([{ role: 'bot', content: introMessage }]);
     }
   }, [profile]);
@@ -41,7 +41,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform: platform, messages: updatedMessages, profile: profile }),
+        body: JSON.stringify({ message: input, platform, messages: updatedMessages, profile }),
       });
 
       if (!response.ok) {
