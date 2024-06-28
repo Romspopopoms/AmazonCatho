@@ -27,6 +27,8 @@ const ChatGPT = () => {
 
   useEffect(() => {
     if (profile) {
+      console.log('Profile received:', profile);
+
       const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
       const goals = parseIfNeeded(profile.goals).join(', ');
       const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
@@ -77,6 +79,7 @@ const ChatGPT = () => {
       }
 
       const data = await response.json();
+      console.log('Response from bot:', data);
       const botMessage = { role: 'bot', content: data.response };
       updatedConversations[currentConversation] = [...updatedMessages, botMessage];
       setConversations(updatedConversations);
