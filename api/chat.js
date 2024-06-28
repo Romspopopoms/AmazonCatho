@@ -30,7 +30,7 @@ const createPrompt = (messages, platform) => {
 
     Platform: ${platform}
 
-    Continue the conversation by asking a relevant question to understand the client's goals and preferences.
+    Start by introducing yourself as a social media content creator and ask relevant questions to understand the client's goals and preferences.
   `;
 };
 

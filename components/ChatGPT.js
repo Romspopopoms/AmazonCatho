@@ -5,7 +5,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 const ChatGPT = () => {
   const [input, setInput] = useState('');
   const [platform, setPlatform] = useState('Instagram'); // Par défaut sur Instagram
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
 
@@ -14,7 +14,8 @@ const ChatGPT = () => {
     if (input.trim() === '') return;
 
     const newMessage = { role: 'user', content: input };
-    setMessages([...messages, newMessage]);
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
     setInput('');
     setLoading(true);
 
@@ -24,7 +25,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform: platform }),
+        body: JSON.stringify({ message: input, platform: platform, messages: updatedMessages }),
       });
 
       if (!response.ok) {
@@ -33,7 +34,7 @@ const ChatGPT = () => {
 
       const data = await response.json();
       const botMessage = { role: 'bot', content: data.response };
-      setMessages([...messages, newMessage, botMessage]);
+      setMessages([...updatedMessages, botMessage]);
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {
@@ -43,7 +44,7 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    setMessages([]);
+    setMessages([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
   };
 
   return (
