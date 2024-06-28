@@ -30,7 +30,18 @@ const ChatGPT = () => {
 
       const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
       const goals = parseIfNeeded(profile.goals).join(', ');
-      const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+      const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
+      const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
+
+      const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
+- Type d'activité: ${profile.activitytype}
+- Sous-type d'activité: ${profile.subactivitytype || 'N/A'}
+- Public cible: ${targetAudience}
+- Objectifs: ${goals}
+- Plateformes préférées: ${preferredPlatforms}
+- Types de contenu: ${contentTypes}
+
+Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
       setMessages([{ role: 'bot', content: introMessage }]);
     }
@@ -80,7 +91,18 @@ const ChatGPT = () => {
     setConversations([...conversations, messages]);
     const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
     const goals = parseIfNeeded(profile.goals).join(', ');
-    const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+    const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
+    const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
+
+    const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
+- Type d'activité: ${profile.activitytype}
+- Sous-type d'activité: ${profile.subactivitytype || 'N/A'}
+- Public cible: ${targetAudience}
+- Objectifs: ${goals}
+- Plateformes préférées: ${preferredPlatforms}
+- Types de contenu: ${contentTypes}
+
+Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
     setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
