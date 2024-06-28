@@ -15,7 +15,8 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
-const createPrompt = (message, platform) => {
+const createPrompt = (messages, platform) => {
+  const conversationHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
   return `
     You are a social media content creator specialized in creating engaging content for platforms like Instagram, TikTok, Facebook, and LinkedIn. Follow these guidelines:
     
@@ -24,10 +25,12 @@ const createPrompt = (message, platform) => {
     3. Provide suggestions for posts, reels, carousels, etc.
     4. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
 
-    Client's message: ${message}
+    Client's conversation history:
+    ${conversationHistory}
+
     Platform: ${platform}
 
-    Start by asking questions to clarify the client's goals and preferences, and then create content based on the responses.
+    Continue the conversation by asking a relevant question to understand the client's goals and preferences.
   `;
 };
 
@@ -36,9 +39,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message, platform } = req.body;
+  const { message, platform, messages } = req.body;
 
-  const prompt = createPrompt(message, platform);
+  const prompt = createPrompt(messages, platform);
 
   try {
     const completion = await openai.chat.completions.create({
