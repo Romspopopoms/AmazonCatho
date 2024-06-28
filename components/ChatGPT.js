@@ -17,8 +17,7 @@ const ChatGPT = () => {
       console.log('Profile received:', profile);
       const targetAudience = Array.isArray(profile.targetAudience) ? profile.targetAudience.join(', ') : 'cible';
       const goals = Array.isArray(profile.goals) ? profile.goals.join(', ') : 'objectifs';
-      const introMessage = `Bonjour ${profile.name}! Vous êtes en forme? 😊 
-      Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+      const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setMessages([{ role: 'bot', content: introMessage }]);
     }
   }, [profile]);
@@ -53,6 +52,7 @@ const ChatGPT = () => {
       }
 
       const data = await response.json();
+      console.log('Response from bot:', data);
       const botMessage = { role: 'bot', content: data.response };
       setMessages([...updatedMessages, botMessage]);
     } catch (error) {
@@ -64,7 +64,8 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    const introMessage = `Bonjour ${profile.name}! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+    const introMessage = `Bonjour ${profile.name}! Vous êtes en forme? 😊
+    Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
     setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
     setPlatformError('');
@@ -96,10 +97,9 @@ const ChatGPT = () => {
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
             <option value="">Sélectionnez une plateforme</option>
-            <option value="Instagram">Instagram</option>
-            <option value="TikTok">TikTok</option>
-            <option value="Facebook">Facebook</option>
-            <option value="LinkedIn">LinkedIn</option>
+            {profile && profile.preferredPlatforms.map((platform) => (
+              <option key={platform} value={platform}>{platform}</option>
+            ))}
           </select>
         </div>
         {platformError && <p className="text-red-500 mb-4">{platformError}</p>}
