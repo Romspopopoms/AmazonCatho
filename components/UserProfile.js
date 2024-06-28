@@ -13,7 +13,7 @@ const UserProfile = ({ saveProfile }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-gray-800 rounded-lg">
+    <form onSubmit={handleSubmit} className="p-4 bg-gray-800 rounded-lg w-full max-w-md">
       <div className="mb-4">
         <label className="block text-white mb-2">Nom:</label>
         <input
@@ -54,7 +54,7 @@ const UserProfile = ({ saveProfile }) => {
           required
         />
       </div>
-      <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Sauvegarder</button>
+      <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Sauvegarder</button>
     </form>
   );
 };
