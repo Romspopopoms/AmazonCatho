@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { name, activityType, subActivityType, targetAudience, goals, preferredPlatforms, contentTypes, experienceLevel } = req.body;
+  const { name, activityType, subActivityType, targetAudience, goals, preferredPlatforms, contentTypes } = req.body;
 
   try {
     const query = `
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id
     `;
-    const params = [name, activityType, subActivityType, JSON.stringify(targetAudience), JSON.stringify(goals), JSON.stringify(preferredPlatforms), JSON.stringify(contentTypes), experienceLevel];
+    const params = [name, activityType, subActivityType, JSON.stringify(targetAudience), JSON.stringify(goals), JSON.stringify(preferredPlatforms), JSON.stringify(contentTypes)];
     const result = await pool.query(query, params);
 
     return res.status(200).json({ success: true, id: result.rows[0].id });
