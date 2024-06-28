@@ -9,7 +9,6 @@ const GenerateImageForm = () => {
   const [model, setModel] = useState('dall-e-3');
   const [quality, setQuality] = useState('standard');
   const [style, setStyle] = useState('vivid');
-  const [platform, setPlatform] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,7 +26,7 @@ const GenerateImageForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt, size, model, quality, style, platform }),
+        body: JSON.stringify({ prompt, size, model, quality, style }),
       });
 
       if (!response.ok) {
@@ -46,7 +45,7 @@ const GenerateImageForm = () => {
 
   return (
     <div className="w-full max-w-md p-4 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl text-white mb-4">Génération d`&apos;Images</h2>
+      <h2 className="text-2xl text-white mb-4">Génération d&apos;Image</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
@@ -84,18 +83,6 @@ const GenerateImageForm = () => {
           >
             <option value="vivid">Vivid</option>
             <option value="natural">Natural</option>
-          </select>
-          <label className="text-white">Plateforme:</label>
-          <select
-            value={platform}
-            onChange={(e) => setPlatform(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="">Sélectionnez une plateforme</option>
-            <option value="Instagram">Instagram</option>
-            <option value="TikTok">TikTok</option>
-            <option value="Facebook">Facebook</option>
-            <option value="LinkedIn">LinkedIn</option>
           </select>
         </div>
         <button
