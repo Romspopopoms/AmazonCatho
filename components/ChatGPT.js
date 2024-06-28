@@ -28,12 +28,7 @@ const ChatGPT = () => {
     if (profile) {
       console.log('Profile received:', profile);
 
-      const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
-      const goals = parseIfNeeded(profile.goals).join(', ');
-      const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
-      const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
-
-      const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :\n\n - **Type d'activité**: ${profile.activitytype}\n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}\n - **Public cible**: ${targetAudience}\n - **Objectifs**: ${goals}\n - **Plateformes préférées**: ${preferredPlatforms}\n - **Types de contenu**: ${contentTypes}\n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+      const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
       setMessages([{ role: 'bot', content: introMessage }]);
     }
@@ -81,12 +76,8 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
-    const goals = parseIfNeeded(profile.goals).join(', ');
-    const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
-    const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
 
-    const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :\n\n - **Type d'activité**: ${profile.activitytype}\n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}\n - **Public cible**: ${targetAudience}\n - **Objectifs**: ${goals}\n - **Plateformes préférées**: ${preferredPlatforms}\n - **Types de contenu**: ${contentTypes}\n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+    const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
     setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
