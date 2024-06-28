@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { prompt, size, model, quality, style } = req.body;
+  const { prompt, size, model, quality, style, platform } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ message: "Prompt is required" });
@@ -19,8 +19,8 @@ export default async function handler(req, res) {
 
   try {
     const response = await openai.createImage({
-      model: model || "dall-e-3",
       prompt: prompt,
+      model: model || "dall-e-3",
       size: size || "1024x1024",
       n: 1, // For dall-e-3, only n=1 is supported
       quality: quality || "standard",
