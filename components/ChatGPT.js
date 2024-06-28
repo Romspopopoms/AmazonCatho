@@ -4,15 +4,22 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const ChatGPT = () => {
   const [input, setInput] = useState('');
-  const [platform, setPlatform] = useState('Instagram'); // Par défaut sur Instagram
-  const [messages, setMessages] = useState([]);
+  const [platform, setPlatform] = useState('');
+  const [messages, setMessages] = useState([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
+  const [platformError, setPlatformError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (input.trim() === '') return;
 
+    if (platform === '') {
+      setPlatformError('Veuillez sélectionner une plateforme de réseaux sociaux.');
+      return;
+    }
+
+    setPlatformError('');
     const newMessage = { role: 'user', content: input };
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
@@ -44,7 +51,9 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    setMessages([]);
+    setMessages([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
+    setPlatform('');
+    setPlatformError('');
   };
 
   return (
@@ -72,12 +81,14 @@ const ChatGPT = () => {
             onChange={(e) => setPlatform(e.target.value)}
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
+            <option value="">Sélectionnez une plateforme</option>
             <option value="Instagram">Instagram</option>
             <option value="TikTok">TikTok</option>
             <option value="Facebook">Facebook</option>
             <option value="LinkedIn">LinkedIn</option>
           </select>
         </div>
+        {platformError && <p className="text-red-500 mb-4">{platformError}</p>}
         <div className="flex-1 bg-gray-800 p-4 rounded-lg mb-4 overflow-y-auto">
           {messages.map((message, index) => (
             <div
