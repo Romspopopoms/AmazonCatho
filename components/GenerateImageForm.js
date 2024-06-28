@@ -45,7 +45,7 @@ const GenerateImageForm = () => {
 
   return (
     <div className="w-full max-w-md p-4 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl text-white mb-4">Génération d&apos;Image</h2>
+      <h2 className="text-2xl text-white mb-4">Génération d&apos;Images</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
