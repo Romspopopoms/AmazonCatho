@@ -1,25 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const UserProfileContext = createContext();
 
-export const useUserProfile = () => {
-  return useContext(UserProfileContext);
-};
-
 export const UserProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
-
-  const fetchProfile = async (userId) => {
-    try {
-      const response = await fetch(`/api/getProfile?id=${userId}`);
-      const data = await response.json();
-      if (data.success) {
-        setProfile(data.profile);
-      }
-    } catch (error) {
-      console.error('Erreur de chargement du profil:', error);
-    }
-  };
 
   const saveProfile = async (profileData) => {
     try {
@@ -32,10 +16,23 @@ export const UserProfileProvider = ({ children }) => {
       });
       const data = await response.json();
       if (data.success) {
+        fetchProfile(data.id);
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
+  };
+
+  const fetchProfile = async (id) => {
+    try {
+      const response = await fetch(`/api/getProfile?id=${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const profileData = data.profile;
         setProfile(profileData);
       }
     } catch (error) {
-      console.error('Erreur de sauvegarde du profil:', error);
+      console.error('Error fetching profile:', error);
     }
   };
 
@@ -45,3 +42,5 @@ export const UserProfileProvider = ({ children }) => {
     </UserProfileContext.Provider>
   );
 };
+
+export const useUserProfile = () => useContext(UserProfileContext);
