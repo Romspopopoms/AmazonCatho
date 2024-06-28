@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
+import ConversationsList from './ConversationsList';  // Importer le nouveau composant
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
@@ -84,23 +85,18 @@ const ChatGPT = () => {
     setPlatformError('');
   };
 
+  const deleteConversation = (index) => {
+    const updatedConversations = conversations.filter((_, i) => i !== index);
+    setConversations(updatedConversations);
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
-      <div className="w-1/4 p-4 border-r border-gray-700">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Conversations</h2>
-          <button onClick={startNewConversation} className="text-blue-500 hover:text-blue-600">
-            <FontAwesomeIcon icon={faPlus} size="lg" />
-          </button>
-        </div>
-        <div className="space-y-2">
-          {conversations.map((conv, index) => (
-            <div key={index} className="p-2 bg-gray-800 rounded-lg">
-              Conversation {index + 1}
-            </div>
-          ))}
-        </div>
-      </div>
+      <ConversationsList
+        conversations={conversations}
+        onAddConversation={startNewConversation}
+        onDeleteConversation={deleteConversation}
+      />
       <div className="flex-1 flex flex-col p-4">
         <div className="flex items-center mb-4">
           <label className="mr-2 text-white">Plateforme:</label>
