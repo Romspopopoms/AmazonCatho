@@ -31,7 +31,7 @@ export const Navbar = () => {
         </ul>
       </div>
       <div className="hidden md:flex items-center gap-x-4">
-        <Link href="/profile" className="text-white hover:text-gray-400">
+        <Link href={isLoggedIn ? "/profile" : "/AdminPage"} className="text-white hover:text-gray-400">
           <GoPersonFill className="text-2xl cursor-pointer" />
         </Link>
         {isLoggedIn ? (
@@ -62,7 +62,7 @@ export const Navbar = () => {
               </li>
             ))}
           </ul>
-          <Link href="/profile" className="text-white hover:text-gray-400">
+          <Link href={isLoggedIn ? "/profile" : "/AdminPage"} className="text-white hover:text-gray-400">
             <GoPersonFill className="text-2xl border-2 border-white rounded-md bg-white hover:bg-gray-400 hover:border-gray-400 hover:text-white mb-4 cursor-pointer" />
           </Link>
           {isLoggedIn ? (
