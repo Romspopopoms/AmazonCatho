@@ -7,7 +7,7 @@ const ChatGPT = () => {
   const { profile } = useUserProfile();
   const [input, setInput] = useState('');
   const [platform, setPlatform] = useState('');
-  const [messages, setMessages] = useState([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [platformError, setPlatformError] = useState('');
@@ -60,7 +60,8 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    setMessages([{ role: 'bot', content: `Bonjour ${profile.name}! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?` }]);
+    const introMessage = `Bonjour ${profile.name}! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+    setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
     setPlatformError('');
   };
