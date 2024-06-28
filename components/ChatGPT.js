@@ -16,8 +16,8 @@ const ChatGPT = () => {
     if (profile) {
       const activityType = profile.activityType || 'activité';
       const subActivityType = profile.subActivityType || 'sous-activité';
-      const targetAudience = profile.targetAudience ? profile.targetAudience.join(', ') : 'cible';
-      const goals = profile.goals ? profile.goals.join(', ') : 'objectifs';
+      const targetAudience = Array.isArray(profile.targetAudience) ? profile.targetAudience.join(', ') : 'cible';
+      const goals = Array.isArray(profile.goals) ? profile.goals.join(', ') : 'objectifs';
       const introMessage = `Bonjour ${profile.name}! Je vois que vous avez une activité de type ${activityType} avec la sous-activité ${subActivityType}. Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setMessages([{ role: 'bot', content: introMessage }]);
     }
