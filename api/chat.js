@@ -4,28 +4,48 @@ import dotenv from 'dotenv';
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
 
-const apiKey = process.env.OPENAI_API_KEY
+const apiKey = process.env.OPENAI_API_KEY;
+
+if (!apiKey) {
+  console.error('Clé API non définie');
+  throw new Error('Clé API non définie');
+}
 
 const openai = new OpenAI({
   apiKey: apiKey,
 });
 
+const createPrompt = (message, platform) => {
+  return `
+    You are a social media content creator specialized in creating engaging content for platforms like Instagram, TikTok, Facebook, and LinkedIn. Follow these guidelines:
+    
+    1. Ask specific questions to understand the client's needs.
+    2. Tailor the content to the target audience of the specified platform.
+    3. Provide suggestions for posts, reels, carousels, etc.
+    4. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
+
+    Client's message: ${message}
+    Platform: ${platform}
+
+    Start by asking questions to clarify the client's goals and preferences, and then create content based on the responses.
+  `;
+};
+
 export default async function handler(req, res) {
-  console.log('Handler start'); // Log de début de la fonction
   if (req.method !== 'POST') {
-    console.log('Invalid method'); // Log pour méthode non supportée
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message } = req.body;
+  const { message, platform } = req.body;
+
+  const prompt = createPrompt(message, platform);
 
   try {
-    console.log('Before API call'); // Log avant l'appel à l'API OpenAI
     const completion = await openai.chat.completions.create({
-      messages: [{ role: 'user', content: message }],
       model: 'gpt-3.5-turbo',
+      messages: [{ role: 'system', content: prompt }],
+      max_tokens: 300,
     });
-    console.log('After API call'); // Log après l'appel à l'API OpenAI
 
     res.status(200).json({ response: completion.choices[0].message.content });
   } catch (error) {

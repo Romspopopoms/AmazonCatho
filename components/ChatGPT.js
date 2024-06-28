@@ -4,6 +4,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const ChatGPT = () => {
   const [input, setInput] = useState('');
+  const [platform, setPlatform] = useState('Instagram'); // Par défaut sur Instagram
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
@@ -23,7 +24,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: input, platform: platform }),
       });
 
       if (!response.ok) {
@@ -63,6 +64,19 @@ const ChatGPT = () => {
         </div>
       </div>
       <div className="flex-1 flex flex-col p-4">
+        <div className="flex items-center mb-4">
+          <label className="mr-2 text-white">Platform:</label>
+          <select
+            value={platform}
+            onChange={(e) => setPlatform(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
+          >
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Facebook">Facebook</option>
+            <option value="LinkedIn">LinkedIn</option>
+          </select>
+        </div>
         <div className="flex-1 bg-gray-800 p-4 rounded-lg mb-4 overflow-y-auto">
           {messages.map((message, index) => (
             <div
