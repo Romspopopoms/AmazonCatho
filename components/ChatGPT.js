@@ -34,14 +34,13 @@ const ChatGPT = () => {
       const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
 
       const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
-- Type d'activité: ${profile.activitytype}
-- Sous-type d'activité: ${profile.subactivitytype || 'N/A'}
-- Public cible: ${targetAudience}
-- Objectifs: ${goals}
-- Plateformes préférées: ${preferredPlatforms}
-- Types de contenu: ${contentTypes}
-
-Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+      \n\n - **Type d'activité**: ${profile.activitytype}
+      \n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}
+      \n - **Public cible**: ${targetAudience}
+      \n - **Objectifs**: ${goals}
+      \n - **Plateformes préférées**: ${preferredPlatforms}
+      \n - **Types de contenu**: ${contentTypes}
+      \n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
       setMessages([{ role: 'bot', content: introMessage }]);
     }
@@ -95,14 +94,13 @@ Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la platefo
     const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
 
     const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
-- Type d'activité: ${profile.activitytype}
-- Sous-type d'activité: ${profile.subactivitytype || 'N/A'}
-- Public cible: ${targetAudience}
-- Objectifs: ${goals}
-- Plateformes préférées: ${preferredPlatforms}
-- Types de contenu: ${contentTypes}
-
-Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+    \n\n - **Type d'activité**: ${profile.activitytype}
+    \n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}
+    \n - **Public cible**: ${targetAudience}
+    \n - **Objectifs**: ${goals}
+    \n - **Plateformes préférées**: ${preferredPlatforms}
+    \n - **Types de contenu**: ${contentTypes}
+    \n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
     setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
@@ -147,7 +145,7 @@ Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la platefo
               key={index}
               className={`p-2 my-2 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-right' : 'bg-gray-700 text-left'}`}
             >
-              {message.content}
+              {message.content.split('\n').map((str, i) => <p key={i}>{str}</p>)}
             </div>
           ))}
           {loading && (
