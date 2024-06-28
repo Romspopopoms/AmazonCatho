@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   try {
     const query = `
       INSERT INTO profiles (name, activityType, subActivityType, targetAudience, goals, preferredPlatforms, contentTypes)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4::jsonb, $5::jsonb, $6::jsonb, $7::jsonb)
       RETURNING id
     `;
     const params = [name, activityType, subActivityType, JSON.stringify(targetAudience), JSON.stringify(goals), JSON.stringify(preferredPlatforms), JSON.stringify(contentTypes)];
