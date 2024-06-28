@@ -1,12 +1,12 @@
 import React from "react";
-import CHAT from "../components/ChatGPT";
+import GenerateImageForm from "../components/GenerateImageForm";
 
-const ChatImage = () => {
+const GenerationImages = () => {
   return (
-    <div className="relative flex flex-col items-center justify-center mt-40 xl:mt-28 gap-y-8 ">
-    <CHAT />
+    <div className="relative flex flex-col items-center justify-center mt-40 xl:mt-28 gap-y-8">
+      <GenerateImageForm />
     </div>
   );
 };
 
-export default ChatImage;
+export default GenerationImages;
