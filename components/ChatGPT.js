@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
-import ConversationsList from './ConversationsList';  // Importer le nouveau composant
+import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
   const [input, setInput] = useState('');
   const [platform, setPlatform] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState([[]]);
+  const [currentConversation, setCurrentConversation] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [conversations, setConversations] = useState([]);
   const [platformError, setPlatformError] = useState('');
 
   const parseIfNeeded = (data) => {
@@ -29,9 +29,21 @@ const ChatGPT = () => {
     if (profile) {
       console.log('Profile received:', profile);
 
-      const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+      const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
+      const goals = parseIfNeeded(profile.goals).join(', ');
+      const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
+      const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
 
-      setMessages([{ role: 'bot', content: introMessage }]);
+      const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
+      \n\n - **Type d'activité**: ${profile.activitytype}
+      \n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}
+      \n - **Public cible**: ${targetAudience}
+      \n - **Objectifs**: ${goals}
+      \n - **Plateformes préférées**: ${preferredPlatforms}
+      \n - **Types de contenu**: ${contentTypes}
+      \n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+
+      setConversations([[{ role: 'bot', content: introMessage }]]);
     }
   }, [profile]);
 
@@ -46,8 +58,10 @@ const ChatGPT = () => {
 
     setPlatformError('');
     const newMessage = { role: 'user', content: input };
-    const updatedMessages = [...messages, newMessage];
-    setMessages(updatedMessages);
+    const updatedMessages = [...conversations[currentConversation], newMessage];
+    const updatedConversations = [...conversations];
+    updatedConversations[currentConversation] = updatedMessages;
+    setConversations(updatedConversations);
     setInput('');
     setLoading(true);
 
@@ -67,7 +81,8 @@ const ChatGPT = () => {
       const data = await response.json();
       console.log('Response from bot:', data);
       const botMessage = { role: 'bot', content: data.response };
-      setMessages([...updatedMessages, botMessage]);
+      updatedConversations[currentConversation] = [...updatedMessages, botMessage];
+      setConversations(updatedConversations);
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {
@@ -76,11 +91,8 @@ const ChatGPT = () => {
   };
 
   const startNewConversation = () => {
-    setConversations([...conversations, messages]);
-
-    const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
-
-    setMessages([{ role: 'bot', content: introMessage }]);
+    setConversations([...conversations, []]);
+    setCurrentConversation(conversations.length);
     setPlatform('');
     setPlatformError('');
   };
@@ -88,14 +100,21 @@ const ChatGPT = () => {
   const deleteConversation = (index) => {
     const updatedConversations = conversations.filter((_, i) => i !== index);
     setConversations(updatedConversations);
+    setCurrentConversation(0); // Reset to the first conversation if the current one is deleted
+  };
+
+  const selectConversation = (index) => {
+    setCurrentConversation(index);
   };
 
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
       <ConversationsList
         conversations={conversations}
+        currentConversation={currentConversation}
         onAddConversation={startNewConversation}
         onDeleteConversation={deleteConversation}
+        onSelectConversation={selectConversation}
       />
       <div className="flex-1 flex flex-col p-4">
         <div className="flex items-center mb-4">
@@ -113,7 +132,7 @@ const ChatGPT = () => {
         </div>
         {platformError && <p className="text-red-500 mb-4">{platformError}</p>}
         <div className="flex-1 bg-gray-800 p-4 rounded-lg mb-4 overflow-y-auto">
-          {messages.map((message, index) => (
+          {conversations[currentConversation] && conversations[currentConversation].map((message, index) => (
             <div
               key={index}
               className={`p-2 my-2 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-right' : 'bg-gray-700 text-left'}`}
