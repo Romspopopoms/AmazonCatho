@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const UserProfile = ({ saveProfile }) => {
-  const [name, setName] = useState('');
-  const [activityType, setActivityType] = useState('');
-  const [subActivityType, setSubActivityType] = useState('');
-  const [customActivityType, setCustomActivityType] = useState('');
-  const [targetAudience, setTargetAudience] = useState([]);
-  const [goals, setGoals] = useState([]);
-  const [preferredPlatforms, setPreferredPlatforms] = useState([]);
-  const [contentTypes, setContentTypes] = useState([]);
+const UserProfile = ({ saveProfile, profile }) => {
+  const [name, setName] = useState(profile?.name || '');
+  const [activityType, setActivityType] = useState(profile?.activityType || '');
+  const [subActivityType, setSubActivityType] = useState(profile?.subActivityType || '');
+  const [customActivityType, setCustomActivityType] = useState(profile?.customActivityType || '');
+  const [targetAudience, setTargetAudience] = useState(profile?.targetAudience || []);
+  const [goals, setGoals] = useState(profile?.goals || []);
+  const [preferredPlatforms, setPreferredPlatforms] = useState(profile?.preferredPlatforms || []);
+  const [contentTypes, setContentTypes] = useState(profile?.contentTypes || []);
+  const [experienceLevel, setExperienceLevel] = useState(profile?.experienceLevel || '');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const profileData = {
       name,
@@ -20,8 +21,9 @@ const UserProfile = ({ saveProfile }) => {
       goals,
       preferredPlatforms,
       contentTypes,
+      experienceLevel,
     };
-    saveProfile(profileData);
+    await saveProfile(profileData);
   };
 
   const handleCheckboxChange = (event, setState) => {
@@ -123,6 +125,7 @@ const UserProfile = ({ saveProfile }) => {
                 value={audience}
                 onChange={(e) => handleCheckboxChange(e, setTargetAudience)}
                 className="mr-2"
+                checked={targetAudience.includes(audience)}
               />
               {audience}
             </label>
@@ -139,24 +142,13 @@ const UserProfile = ({ saveProfile }) => {
                 value={goal}
                 onChange={(e) => handleCheckboxChange(e, setGoals)}
                 className="mr-2"
+                checked={goals.includes(goal)}
               />
               {goal}
             </label>
           ))}
         </div>
       </div>
-      {targetAudience.includes('Autre') && (
-        <div className="mb-4">
-          <label className="block text-white mb-2">Précisez votre public cible:</label>
-          <input
-            type="text"
-            value={customActivityType}
-            onChange={(e) => setCustomActivityType(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-            required
-          />
-        </div>
-      )}
       {goals.includes('Autre') && (
         <div className="mb-4">
           <label className="block text-white mb-2">Précisez vos objectifs:</label>
@@ -179,6 +171,7 @@ const UserProfile = ({ saveProfile }) => {
                 value={platform}
                 onChange={(e) => handleCheckboxChange(e, setPreferredPlatforms)}
                 className="mr-2"
+                checked={preferredPlatforms.includes(platform)}
               />
               {platform}
             </label>
@@ -195,13 +188,13 @@ const UserProfile = ({ saveProfile }) => {
                 value={contentType}
                 onChange={(e) => handleCheckboxChange(e, setContentTypes)}
                 className="mr-2"
+                checked={contentTypes.includes(contentType)}
               />
               {contentType}
             </label>
           ))}
         </div>
       </div>
-      
       <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Sauvegarder</button>
     </form>
   );
