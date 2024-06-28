@@ -11,7 +11,6 @@ const DisplayProfile = ({ profile }) => {
       <p className="text-white mb-2"><strong>Objectifs:</strong> {profile.goals.join(', ')}</p>
       <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {profile.preferredPlatforms.join(', ')}</p>
       <p className="text-white mb-2"><strong>Types de contenu:</strong> {profile.contentTypes.join(', ')}</p>
-      <p className="text-white mb-2"><strong>Niveau d&apos;expérience:</strong> {profile.experienceLevel}</p>
     </div>
   );
 };
