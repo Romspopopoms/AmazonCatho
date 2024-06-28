@@ -17,7 +17,8 @@ const ChatGPT = () => {
       console.log('Profile received:', profile);
       const targetAudience = Array.isArray(profile.targetAudience) ? profile.targetAudience.join(', ') : 'cible';
       const goals = Array.isArray(profile.goals) ? profile.goals.join(', ') : 'objectifs';
-      const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+      const introMessage = `Bonjour ${profile.name}! Vous êtes en forme? 😊 
+      Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setMessages([{ role: 'bot', content: introMessage }]);
     }
   }, [profile]);
