@@ -12,12 +12,26 @@ const ChatGPT = () => {
   const [conversations, setConversations] = useState([]);
   const [platformError, setPlatformError] = useState('');
 
+  const parseIfNeeded = (data) => {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch (error) {
+        console.error('Failed to parse JSON:', error);
+        return [];
+      }
+    }
+    return data || [];
+  };
+
   useEffect(() => {
     if (profile) {
       console.log('Profile received:', profile);
-      const targetAudience = Array.isArray(profile.targetAudience) ? profile.targetAudience.join(', ') : 'cible';
-      const goals = Array.isArray(profile.goals) ? profile.goals.join(', ') : 'objectifs';
+
+      const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
+      const goals = parseIfNeeded(profile.goals).join(', ');
       const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+
       setMessages([{ role: 'bot', content: introMessage }]);
     }
   }, [profile]);
@@ -64,8 +78,10 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    const introMessage = `Bonjour ${profile.name}! Vous êtes en forme? 😊
-    Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+    const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
+    const goals = parseIfNeeded(profile.goals).join(', ');
+    const introMessage = `Bonjour ${profile.name}! Vous ciblez ${targetAudience} et vous avez les objectifs suivants : ${goals}. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+
     setMessages([{ role: 'bot', content: introMessage }]);
     setPlatform('');
     setPlatformError('');
@@ -97,7 +113,7 @@ const ChatGPT = () => {
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
             <option value="">Sélectionnez une plateforme</option>
-            {profile && profile.preferredPlatforms.map((platform) => (
+            {profile && Array.isArray(profile.preferredplatforms) && profile.preferredplatforms.map((platform) => (
               <option key={platform} value={platform}>{platform}</option>
             ))}
           </select>
