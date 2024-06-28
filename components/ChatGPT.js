@@ -13,35 +13,11 @@ const ChatGPT = () => {
   const [loading, setLoading] = useState(false);
   const [platformError, setPlatformError] = useState('');
 
-  const parseIfNeeded = (data) => {
-    if (typeof data === 'string') {
-      try {
-        return JSON.parse(data);
-      } catch (error) {
-        console.error('Failed to parse JSON:', error);
-        return [];
-      }
-    }
-    return data || [];
-  };
-
   useEffect(() => {
     if (profile) {
       console.log('Profile received:', profile);
 
-      const targetAudience = parseIfNeeded(profile.targetaudience).join(', ');
-      const goals = parseIfNeeded(profile.goals).join(', ');
-      const preferredPlatforms = parseIfNeeded(profile.preferredplatforms).join(', ');
-      const contentTypes = parseIfNeeded(profile.contenttypes).join(', ');
-
-      const introMessage = `Bonjour ${profile.name}! Voici un résumé de votre profil :
-      \n\n - **Type d'activité**: ${profile.activitytype}
-      \n - **Sous-type d'activité**: ${profile.subactivitytype || 'N/A'}
-      \n - **Public cible**: ${targetAudience}
-      \n - **Objectifs**: ${goals}
-      \n - **Plateformes préférées**: ${preferredPlatforms}
-      \n - **Types de contenu**: ${contentTypes}
-      \n\nComment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+      const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
 
       setConversations([[{ role: 'bot', content: introMessage }]]);
     }
@@ -91,7 +67,9 @@ const ChatGPT = () => {
   };
 
   const startNewConversation = () => {
-    setConversations([...conversations, []]);
+    const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+
+    setConversations([...conversations, [{ role: 'bot', content: introMessage }]]);
     setCurrentConversation(conversations.length);
     setPlatform('');
     setPlatformError('');
@@ -165,14 +143,14 @@ const ChatGPT = () => {
       </div>
       {profile && (
         <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-800">
-          <h2 className="text-xl font-bold text-blue-400 mb-4">Profil Utilisateur</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
           <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
           {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetaudience).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {parseIfNeeded(profile.preferredplatforms).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contenttypes).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Public cible:</strong> {profile.targetaudience.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {profile.goals.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {profile.preferredplatforms.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {profile.contenttypes.join(', ')}</p>
         </div>
       )}
     </div>
