@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useUserProfile } from './UserProfileContext';
 
 const ChatGPT = () => {
+  const { profile } = useUserProfile();
   const [input, setInput] = useState('');
   const [platform, setPlatform] = useState('');
   const [messages, setMessages] = useState([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [platformError, setPlatformError] = useState('');
+
+  useEffect(() => {
+    if (profile) {
+      const introMessage = `Bonjour ${profile.name}! Je vois que vous avez une entreprise de type ${profile.businessType} et que vous ciblez ${profile.targetAudience}. Quels sont vos objectifs actuels pour vos réseaux sociaux?`;
+      setMessages([{ role: 'bot', content: introMessage }]);
+    }
+  }, [profile]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,7 +41,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform: platform, messages: updatedMessages }),
+        body: JSON.stringify({ message: input, platform: platform, messages: updatedMessages, profile: profile }),
       });
 
       if (!response.ok) {
@@ -51,7 +60,7 @@ const ChatGPT = () => {
 
   const startNewConversation = () => {
     setConversations([...conversations, messages]);
-    setMessages([{ role: 'bot', content: 'Bonjour! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd\'hui ?' }]);
+    setMessages([{ role: 'bot', content: `Bonjour ${profile.name}! Je suis votre créateur de contenu pour les réseaux sociaux. Pour quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?` }]);
     setPlatform('');
     setPlatformError('');
   };
