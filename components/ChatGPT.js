@@ -27,8 +27,8 @@ const ChatGPT = () => {
     event.preventDefault();
     if (input.trim() === '') return;
 
-    if (category === '') {
-      setCategoryError('Veuillez sélectionner une catégorie.');
+    if (category === '' || platform === '') {
+      setCategoryError('Veuillez sélectionner une catégorie et une plateforme.');
       return;
     }
 
@@ -175,12 +175,12 @@ const ChatGPT = () => {
         <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
           <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
-          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
-          {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetaudience).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
+          {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
+          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetAudience).join(', ')}</p>
           <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {parseIfNeeded(profile.preferredplatforms).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contenttypes).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {parseIfNeeded(profile.preferredPlatforms).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contentTypes).join(', ')}</p>
         </div>
       )}
     </div>

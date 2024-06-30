@@ -24,8 +24,8 @@ const createPrompt = (messages, platform, category, step) => {
     Category: ${category}
 
     Guidelines:
-    1. Start by asking specific questions to understand the client's needs based on the selected category.
-    2. Provide detailed and actionable suggestions.
+    1. Provide a brief and concise response.
+    2. Give actionable suggestions based on the client's input.
     3. Tailor the content to the target audience and platform.
     4. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
 
@@ -34,43 +34,41 @@ const createPrompt = (messages, platform, category, step) => {
 
     Current Step: ${step}
 
-    Based on the current step and the client's responses, continue the conversation by asking the next relevant question or providing the next suggestion.
+    Based on the current step and the client's responses, continue the conversation by providing the next relevant suggestion or action.
   `;
 };
 
 const getNextStep = (category, step) => {
   const steps = {
     'Création de planning de contenu sur 1 mois': [
-      'Quelle est votre audience cible ?',
-      'Quels sont les principaux objectifs de votre contenu ?',
-      'Quelles sont les dates importantes à inclure dans le planning ?',
-      'Quels types de contenu souhaitez-vous publier (posts, reels, stories) ?',
+      'Identify the key topics or themes for the month.',
+      'Determine the frequency and type of content (posts, reels, stories).',
+      'Create a detailed content calendar with specific dates.',
     ],
     'Campagne de promotion de produit': [
-      'Quel est le produit que vous souhaitez promouvoir ?',
-      'Quelle est votre audience cible ?',
-      'Quels sont les messages clés à communiquer ?',
-      'Quels types de contenu souhaitez-vous utiliser (posts, reels, stories, publicités) ?',
+      'Define the product and its unique selling points.',
+      'Create promotional posts and stories highlighting the product.',
+      'Plan a timeline for the campaign, including launch and follow-up posts.',
     ],
     'Développement de la marque personnelle': [
-      'Quels aspects de votre carrière ou de votre entreprise souhaitez-vous mettre en avant ?',
-      'Quelle est votre audience cible ?',
-      'Quels types de contenu souhaitez-vous créer (posts, articles, vidéos) ?',
+      'Identify the key aspects of your personal brand to highlight.',
+      'Create a mix of content types (posts, articles, videos) to showcase these aspects.',
+      'Develop a schedule to consistently post brand-related content.',
     ],
     'Engagement et interaction avec l\'audience': [
-      'Quel type d\'engagement recherchez-vous (sondages, questions, sessions Q&A) ?',
-      'Quelle est votre audience cible ?',
-      'Quels types de contenu souhaitez-vous utiliser pour engager votre audience ?',
+      'Plan interactive content like polls, Q&A sessions, and challenges.',
+      'Encourage user-generated content and engagement through comments and shares.',
+      'Schedule regular engagement activities to maintain audience interest.',
     ],
     'Analyse et optimisation des performances': [
-      'Quels sont vos principaux indicateurs de performance sur [plateforme] ?',
-      'Quels objectifs souhaitez-vous atteindre ?',
-      'Souhaitez-vous des recommandations d\'optimisation basées sur vos performances actuelles ?',
+      'Review current performance metrics and identify areas for improvement.',
+      'Provide specific recommendations for optimizing content and strategy.',
+      'Set new performance goals and create a plan to achieve them.',
     ],
     'Création de contenu saisonnier': [
-      'Quel événement ou saison souhaitez-vous cibler ?',
-      'Quel message souhaitez-vous transmettre ?',
-      'Quels types de contenu souhaitez-vous créer (posts, stories, vidéos) ?',
+      'Identify key seasonal events and themes relevant to your audience.',
+      'Create themed posts and stories to align with these events.',
+      'Plan a content schedule to maximize seasonal engagement.',
     ],
   };
 
