@@ -86,6 +86,18 @@ const ChatGPT = () => {
     setCurrentConversation(index);
   };
 
+  const parseIfNeeded = (data) => {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch (error) {
+        console.error('Failed to parse JSON:', error);
+        return [];
+      }
+    }
+    return data || [];
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
       <ConversationsList
@@ -165,10 +177,10 @@ const ChatGPT = () => {
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
           <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
           {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {profile.targetaudience.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Objectifs:</strong> {profile.goals.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {profile.preferredplatforms.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {profile.contenttypes.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetaudience).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {parseIfNeeded(profile.preferredplatforms).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contenttypes).join(', ')}</p>
         </div>
       )}
     </div>
