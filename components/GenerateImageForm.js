@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 
 const GenerateImageForm = () => {
@@ -6,10 +8,6 @@ const GenerateImageForm = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [size, setSize] = useState('1024x1024');
-  const [model, setModel] = useState('dall-e-3');
-  const [quality, setQuality] = useState('standard');
-  const [style, setStyle] = useState('vivid');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,7 +25,7 @@ const GenerateImageForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt, size, model, quality, style }),
+        body: JSON.stringify({ prompt, size: '1024x1024', model: 'dall-e-3' }),
       });
 
       if (!response.ok) {
@@ -56,42 +54,12 @@ const GenerateImageForm = () => {
           className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
         />
         {error && <p className="text-red-500">{error}</p>}
-        <div className="flex flex-col gap-4">
-          <label className="text-white">Taille:</label>
-          <select
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="1024x1024">1024x1024</option>
-            <option value="1792x1024">1792x1024</option>
-            <option value="1024x1792">1024x1792</option>
-          </select>
-          <label className="text-white">Qualité:</label>
-          <select
-            value={quality}
-            onChange={(e) => setQuality(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="standard">Standard</option>
-            <option value="hd">HD</option>
-          </select>
-          <label className="text-white">Style:</label>
-          <select
-            value={style}
-            onChange={(e) => setStyle(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="vivid">Vivid</option>
-            <option value="natural">Natural</option>
-          </select>
-        </div>
         <button
           type="submit"
           className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           disabled={loading}
         >
-          {loading ? 'Génération en cours...' : 'Générer'}
+          {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Générer'}
         </button>
       </form>
       {imageUrl && (

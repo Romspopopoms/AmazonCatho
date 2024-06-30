@@ -1,29 +1,27 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true
 });
-const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { prompt, size, model, quality, style } = req.body;
+  const { prompt, size, model } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ message: "Prompt is required" });
   }
 
   try {
-    const response = await openai.createImage({
+    const response = await openai.images.generate({
       prompt: prompt,
       model: model || "dall-e-3",
       size: size || "1024x1024",
       n: 1,
-      quality: quality || "standard",
-      style: style || "vivid",
       response_format: "url",
     });
 
