@@ -15,11 +15,20 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
-const createPrompt = (messages, platform, category, step) => {
+const createPrompt = (messages, platform, category, step, profile) => {
   const conversationHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
   const specificPrompt = getSpecificPrompt(category, step);
   return `
     You are a social media content creator specialized in creating engaging content for various social media platforms. Tailor your advice to the selected category and the client's needs.
+
+    Client Profile:
+    Name: ${profile.name}
+    Activity Type: ${profile.activityType}
+    Sub Activity Type: ${profile.subActivityType}
+    Target Audience: ${profile.targetAudience.join(', ')}
+    Goals: ${profile.goals.join(', ')}
+    Preferred Platforms: ${profile.preferredPlatforms.join(', ')}
+    Content Types: ${profile.contentTypes.join(', ')}
 
     Platform: ${platform}
     Category: ${category}
@@ -41,34 +50,34 @@ const createPrompt = (messages, platform, category, step) => {
 const getSpecificPrompt = (category, step) => {
   const prompts = {
     'Création de planning de contenu sur 1 mois': [
-      'Identify the key topics or themes for the month and provide a detailed plan.',
-      'Determine the frequency and type of content (posts, reels, stories) and create a schedule.',
-      'Create a detailed content calendar with specific dates and content ideas.',
+      'Based on your profile, I suggest creating a content calendar with a mix of posts, reels, and stories to keep your audience engaged. For example, a reel on Monday and Thursday, a carousel on Saturday, and a post on Wednesday and Sunday. What do you think about this approach?',
+      'Now that we have the basic structure, let’s add some specific topics. What are your key themes for the month?',
+      'Great! Let’s finalize your content calendar. Would you like me to create a detailed schedule with specific dates and content ideas?',
     ],
     'Campagne de promotion de produit': [
-      'Define the product and its unique selling points, and suggest creative ways to promote it.',
-      'Create promotional posts and stories highlighting the product with engaging content.',
-      'Plan a timeline for the campaign, including launch and follow-up posts, and suggest key messages.',
+      'For your product promotion on TikTok, I suggest creating a series of engaging videos showcasing the product features and benefits. Start with a teaser video, followed by a demonstration, and end with a call-to-action. Does this sound good?',
+      'Who is your target audience for this campaign, and what key messages do you want to communicate?',
+      'Perfect! Let’s create a detailed promotional plan with specific dates, content ideas, and calls to action.',
     ],
     'Développement de la marque personnelle': [
-      'Identify the key aspects of your personal brand to highlight, and provide content ideas.',
-      'Create a mix of content types (posts, articles, videos) to showcase these aspects, with specific examples.',
-      'Develop a schedule to consistently post brand-related content and suggest strategies for engagement.',
+      'To develop your personal brand, I recommend sharing a mix of professional achievements, personal stories, and industry insights. How about posting an achievement on Monday, a personal story on Wednesday, and an industry insight on Friday?',
+      'What specific aspects of your career or business do you want to highlight?',
+      'Excellent! Let’s create a detailed content plan that aligns with your personal brand goals and audience preferences.',
     ],
     'Engagement et interaction avec l\'audience': [
-      'Plan interactive content like polls, Q&A sessions, and challenges, with examples.',
-      'Encourage user-generated content and engagement through comments and shares, and suggest specific activities.',
-      'Schedule regular engagement activities to maintain audience interest, with a detailed plan.',
+      'For engaging your audience, I suggest starting with a poll or a question on Monday, followed by a Q&A session on Wednesday, and ending with user-generated content on Friday. Does this approach work for you?',
+      'What type of engagement are you specifically looking for (polls, questions, Q&A sessions)?',
+      'Great! Let’s create a detailed engagement plan with specific dates, content ideas, and interaction strategies.',
     ],
     'Analyse et optimisation des performances': [
-      'Review current performance metrics and identify areas for improvement, with detailed analysis.',
-      'Provide specific recommendations for optimizing content and strategy, with actionable steps.',
-      'Set new performance goals and create a plan to achieve them, with clear objectives and timelines.',
+      'To optimize your performance, I suggest starting with a review of your current metrics. Identify what’s working and what’s not. Then, implement changes and track the improvements. How does this plan sound?',
+      'What are your key performance indicators on the selected platform?',
+      'Let’s create a detailed optimization plan based on your current performance and goals.',
     ],
     'Création de contenu saisonnier': [
-      'Identify key seasonal events and themes relevant to your audience, with specific ideas.',
-      'Create themed posts and stories to align with these events, with examples and suggestions.',
-      'Plan a content schedule to maximize seasonal engagement, with detailed planning.',
+      'For seasonal content, I suggest creating themed posts and stories around the event or season. For example, a countdown series leading up to the event. What are your thoughts on this?',
+      'What specific message do you want to convey for this season or event?',
+      'Let’s create a detailed seasonal content plan with specific dates and content ideas.',
     ],
   };
 
@@ -78,34 +87,34 @@ const getSpecificPrompt = (category, step) => {
 const getNextStep = (category, step) => {
   const steps = {
     'Création de planning de contenu sur 1 mois': [
-      'Identify the key topics or themes for the month.',
-      'Determine the frequency and type of content (posts, reels, stories).',
-      'Create a detailed content calendar with specific dates.',
+      'What are your key topics or themes for the month?',
+      'How often do you want to post, and what types of content (posts, reels, stories) do you prefer?',
+      'Would you like a detailed content calendar with specific dates and content ideas?',
     ],
     'Campagne de promotion de produit': [
-      'Define the product and its unique selling points.',
-      'Create promotional posts and stories highlighting the product.',
-      'Plan a timeline for the campaign, including launch and follow-up posts.',
+      'What product do you want to promote, and what are the key messages you want to communicate?',
+      'Who is your target audience for this campaign, and what content types (posts, reels, stories, ads) do you want to use?',
+      'Would you like a detailed promotional plan with specific dates, content ideas, and calls to action?',
     ],
     'Développement de la marque personnelle': [
-      'Identify the key aspects of your personal brand to highlight.',
-      'Create a mix of content types (posts, articles, videos) to showcase these aspects.',
-      'Develop a schedule to consistently post brand-related content.',
+      'What aspects of your career or business do you want to highlight?',
+      'Who is your target audience, and what content types (posts, articles, videos) do you prefer?',
+      'Let’s create a detailed content plan that aligns with your personal brand goals and audience preferences.',
     ],
     'Engagement et interaction avec l\'audience': [
-      'Plan interactive content like polls, Q&A sessions, and challenges.',
-      'Encourage user-generated content and engagement through comments and shares.',
-      'Schedule regular engagement activities to maintain audience interest.',
+      'What type of engagement are you looking for (polls, questions, Q&A sessions)?',
+      'Who is your target audience, and what content types do you prefer to engage them?',
+      'Let’s create a detailed engagement plan with specific dates, content ideas, and interaction strategies.',
     ],
     'Analyse et optimisation des performances': [
-      'Review current performance metrics and identify areas for improvement.',
-      'Provide specific recommendations for optimizing content and strategy.',
-      'Set new performance goals and create a plan to achieve them.',
+      'What are your key performance indicators on the selected platform?',
+      'What goals do you want to achieve, and what optimization strategies do you need?',
+      'Let’s create a detailed optimization plan based on your current performance and goals.',
     ],
     'Création de contenu saisonnier': [
-      'Identify key seasonal events and themes relevant to your audience.',
-      'Create themed posts and stories to align with these events.',
-      'Plan a content schedule to maximize seasonal engagement.',
+      'What event or season do you want to target?',
+      'What specific message do you want to convey?',
+      'Let’s create a detailed seasonal content plan with specific dates and content ideas.',
     ],
   };
 
@@ -117,9 +126,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message, platform, category, messages, step } = req.body;
+  const { message, platform, category, messages, step, profile } = req.body;
 
-  const prompt = createPrompt(messages, platform, category, step);
+  const prompt = createPrompt(messages, platform, category, step, profile);
 
   try {
     const completion = await openai.chat.completions.create({
