@@ -19,15 +19,13 @@ export default async function handler(req, res) {
       SELECT 
         id,
         name, 
-        activity_type AS "activityType", 
-        sub_activity_type AS "subActivityType", 
-        custom_activity_type AS "customActivityType", 
-        target_audience AS "targetAudience", 
+        activitytype AS "activityType", 
+        subactivitytype AS "subActivityType", 
+        targetaudience AS "targetAudience", 
         goals, 
-        preferred_platforms AS "preferredPlatforms", 
-        content_types AS "contentTypes", 
-        experience_level AS "experienceLevel", 
-        COALESCE(image_urls, '{}') AS "imageUrls" 
+        preferredplatforms AS "preferredPlatforms", 
+        contenttypes AS "contentTypes",
+        COALESCE(image_urls, '[]') AS "imageUrls"
       FROM profiles 
       WHERE id = $1
     `;

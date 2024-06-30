@@ -17,32 +17,30 @@ export default async function handler(req, res) {
     name,
     activityType,
     subActivityType,
-    customActivityType,
     targetAudience,
     goals,
     preferredPlatforms,
     contentTypes,
-    experienceLevel,
+    imageUrls,
   } = req.body;
 
   try {
     const query = `
-      INSERT INTO profiles (id, name, activity_type, sub_activity_type, custom_activity_type, target_audience, goals, preferred_platforms, content_types, experience_level)
-      VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb, $10)
+      INSERT INTO profiles (id, name, activitytype, subactivitytype, targetaudience, goals, preferredplatforms, contenttypes, image_urls)
+      VALUES ($1, $2, $3, $4, $5::jsonb, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb)
       ON CONFLICT (id) DO UPDATE
       SET 
         name = EXCLUDED.name,
-        activity_type = EXCLUDED.activity_type,
-        sub_activity_type = EXCLUDED.sub_activity_type,
-        custom_activity_type = EXCLUDED.custom_activity_type,
-        target_audience = EXCLUDED.target_audience,
+        activitytype = EXCLUDED.activitytype,
+        subactivitytype = EXCLUDED.subactivitytype,
+        targetaudience = EXCLUDED.targetaudience,
         goals = EXCLUDED.goals,
-        preferred_platforms = EXCLUDED.preferred_platforms,
-        content_types = EXCLUDED.content_types,
-        experience_level = EXCLUDED.experience_level
+        preferredplatforms = EXCLUDED.preferredplatforms,
+        contenttypes = EXCLUDED.contenttypes,
+        image_urls = EXCLUDED.image_urls
       RETURNING id
     `;
-    const params = [id, name, activityType, subActivityType, customActivityType, JSON.stringify(targetAudience), JSON.stringify(goals), JSON.stringify(preferredPlatforms), JSON.stringify(contentTypes), experienceLevel];
+    const params = [id, name, activityType, subActivityType, JSON.stringify(targetAudience), JSON.stringify(goals), JSON.stringify(preferredPlatforms), JSON.stringify(contentTypes), JSON.stringify(imageUrls)];
     const result = await pool.query(query, params);
 
     return res.status(200).json({ success: true, id: result.rows[0].id });
