@@ -1,9 +1,4 @@
-import OpenAI from "openai";
 import fetch from 'node-fetch';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -36,9 +31,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (data && data.data && data.data.length > 0) {
-      const taskId = data.id; // Assume the API returns a task ID for long-running tasks
-      return res.status(200).json({ taskId });
+    if (data.id) {
+      return res.status(200).json({ taskId: data.id });
     } else {
       throw new Error('Failed to initiate image generation.');
     }

@@ -20,7 +20,7 @@ const GenerateImageForm = () => {
         setImageUrl(data.imageUrl);
         setLoading(false);
       } else if (response.status === 202) {
-        setTimeout(() => checkImageStatus(taskId), 2000); // Vérifier toutes les 2 secondes
+        setTimeout(() => checkImageStatus(taskId), 10000); // Vérifier toutes les 10 secondes
       } else {
         setError(data.message);
         setLoading(false);
