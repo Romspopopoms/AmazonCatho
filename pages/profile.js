@@ -58,13 +58,14 @@ export default function Profile() {
   };
 
   const handleDeleteImage = async (imageUrl) => {
+    const userId = 3; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
     try {
       const response = await fetch('/api/deleteImage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageUrl }),
+        body: JSON.stringify({ imageUrl, userId }),
       });
 
       if (response.ok) {
