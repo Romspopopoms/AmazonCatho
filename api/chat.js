@@ -17,6 +17,7 @@ const openai = new OpenAI({
 
 const createPrompt = (messages, platform, category, step) => {
   const conversationHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+  const specificPrompt = getSpecificPrompt(category, step);
   return `
     You are a social media content creator specialized in creating engaging content for various social media platforms. Tailor your advice to the selected category and the client's needs.
 
@@ -24,10 +25,9 @@ const createPrompt = (messages, platform, category, step) => {
     Category: ${category}
 
     Guidelines:
-    1. Provide a brief and concise response.
-    2. Give actionable suggestions based on the client's input.
-    3. Tailor the content to the target audience and platform.
-    4. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
+    1. ${specificPrompt}
+    2. Tailor the content to the target audience and platform.
+    3. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
 
     Client's conversation history:
     ${conversationHistory}
@@ -36,6 +36,43 @@ const createPrompt = (messages, platform, category, step) => {
 
     Based on the current step and the client's responses, continue the conversation by providing the next relevant suggestion or action.
   `;
+};
+
+const getSpecificPrompt = (category, step) => {
+  const prompts = {
+    'Création de planning de contenu sur 1 mois': [
+      'Identify the key topics or themes for the month and provide a detailed plan.',
+      'Determine the frequency and type of content (posts, reels, stories) and create a schedule.',
+      'Create a detailed content calendar with specific dates and content ideas.',
+    ],
+    'Campagne de promotion de produit': [
+      'Define the product and its unique selling points, and suggest creative ways to promote it.',
+      'Create promotional posts and stories highlighting the product with engaging content.',
+      'Plan a timeline for the campaign, including launch and follow-up posts, and suggest key messages.',
+    ],
+    'Développement de la marque personnelle': [
+      'Identify the key aspects of your personal brand to highlight, and provide content ideas.',
+      'Create a mix of content types (posts, articles, videos) to showcase these aspects, with specific examples.',
+      'Develop a schedule to consistently post brand-related content and suggest strategies for engagement.',
+    ],
+    'Engagement et interaction avec l\'audience': [
+      'Plan interactive content like polls, Q&A sessions, and challenges, with examples.',
+      'Encourage user-generated content and engagement through comments and shares, and suggest specific activities.',
+      'Schedule regular engagement activities to maintain audience interest, with a detailed plan.',
+    ],
+    'Analyse et optimisation des performances': [
+      'Review current performance metrics and identify areas for improvement, with detailed analysis.',
+      'Provide specific recommendations for optimizing content and strategy, with actionable steps.',
+      'Set new performance goals and create a plan to achieve them, with clear objectives and timelines.',
+    ],
+    'Création de contenu saisonnier': [
+      'Identify key seasonal events and themes relevant to your audience, with specific ideas.',
+      'Create themed posts and stories to align with these events, with examples and suggestions.',
+      'Plan a content schedule to maximize seasonal engagement, with detailed planning.',
+    ],
+  };
+
+  return prompts[category][step];
 };
 
 const getNextStep = (category, step) => {
