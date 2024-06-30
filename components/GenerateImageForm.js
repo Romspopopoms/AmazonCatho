@@ -63,13 +63,20 @@ const GenerateImageForm = () => {
     }
   };
 
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = 'generated-image.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'generated-image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement de l\'image:', error);
+      setError('Erreur lors du téléchargement de l\'image');
+    }
   };
 
   return (
