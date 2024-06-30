@@ -1,8 +1,23 @@
 import OpenAI from "openai";
+import fetch from 'node-fetch';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+async function fetchWithTimeout(resource, options = {}) {
+  const { timeout = 8000 } = options;
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal,
+  });
+  clearTimeout(id);
+
+  return response;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,8 +41,12 @@ export default async function handler(req, res) {
       response_format: "url",
     });
 
-    const imageUrl = response.data[0].url;
-    return res.status(200).json({ imageUrl });
+    if (response.data && response.data.length > 0) {
+      const imageUrl = response.data[0].url;
+      return res.status(200).json({ imageUrl });
+    } else {
+      throw new Error('No image URL returned by OpenAI.');
+    }
   } catch (error) {
     console.error('Error generating image:', error);
     return res.status(500).json({ message: "Internal server error" });
