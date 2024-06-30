@@ -1,9 +1,9 @@
-import fetch from 'node-fetch';
-import OpenAI from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
 
-const openai = new OpenAI({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,41 +17,24 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        model: model || "dall-e-3",
-        size: size || "1024x1024",
-        n: 1, // For dall-e-3, only n=1 is supported
-        quality: quality || "standard",
-        style: style || "vivid",
-        response_format: "url",
-      }),
-      timeout: 25000, // 15 seconds timeout
+    const response = await openai.createImage({
+      prompt: prompt,
+      model: model || "dall-e-3",
+      size: size || "1024x1024",
+      n: 1,
+      quality: quality || "standard",
+      style: style || "vivid",
+      response_format: "url",
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (data.data && data.data.length > 0) {
-      const imageUrl = data.data[0].url;
+    if (response.data && response.data.length > 0) {
+      const imageUrl = response.data[0].url;
       return res.status(200).json({ imageUrl });
     } else {
       throw new Error('No image URL returned by OpenAI.');
     }
   } catch (error) {
     console.error('Error generating image:', error);
-    if (error.name === 'AbortError') {
-      return res.status(504).json({ message: "Request timed out" });
-    }
     return res.status(500).json({ message: "Internal server error" });
   }
 }
