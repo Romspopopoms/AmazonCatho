@@ -30,6 +30,7 @@ export const UserProfileProvider = ({ children }) => {
       if (data.success) {
         const profileData = data.profile;
         setProfile(profileData);
+        return profileData;
       }
     } catch (error) {
       console.error('Error fetching profile:', error);

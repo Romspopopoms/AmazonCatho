@@ -1,34 +1,48 @@
-// /api/getProfile.js
 import { Pool } from 'pg';
+import { getSession } from 'next-auth/react';
 
-// Assurez-vous que la variable d'environnement POSTGRES_URL est définie sur Vercel
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false  // Nécessaire si la base de données utilise SSL
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: "Method not allowed" });
+  const session = await getSession({ req });
+  if (!session) {
+    return res.status(401).json({ success: false, message: 'Not authenticated' });
   }
 
   const { id } = req.query;
 
   try {
-    const query = 'SELECT * FROM profiles WHERE id = $1';
+    const query = `
+      SELECT 
+        id,
+        name, 
+        activity_type AS "activityType", 
+        sub_activity_type AS "subActivityType", 
+        custom_activity_type AS "customActivityType", 
+        target_audience AS "targetAudience", 
+        goals, 
+        preferred_platforms AS "preferredPlatforms", 
+        content_types AS "contentTypes", 
+        experience_level AS "experienceLevel", 
+        COALESCE(image_urls, '{}') AS "imageUrls" 
+      FROM profiles 
+      WHERE id = $1
+    `;
     const params = [id];
-    const result = await pool.query(query, params);
+    const { rows } = await pool.query(query, params);
 
-    if (result.rows.length > 0) {
-      const profile = result.rows[0];
-      return res.status(200).json({ success: true, profile });
-    } else {
-      return res.status(404).json({ success: false, message: "Profile not found" });
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
+
+    return res.status(200).json({ success: true, profile: rows[0] });
   } catch (error) {
     console.error('Database error:', error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 }
