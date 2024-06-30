@@ -85,6 +85,20 @@ const ChatGPT = () => {
     setCurrentConversation(index);
   };
 
+  const parseIfNeeded = (data) => {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch (error) {
+        console.error('Failed to parse JSON:', error);
+        return [];
+      }
+    }
+    return data || [];
+  };
+
+  const preferredPlatforms = parseIfNeeded(profile.preferredPlatforms);
+
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
       <ConversationsList
@@ -103,7 +117,7 @@ const ChatGPT = () => {
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
             <option value="">Sélectionnez une plateforme</option>
-            {profile && Array.isArray(profile.preferredplatforms) && profile.preferredplatforms.map((platform) => (
+            {Array.isArray(preferredPlatforms) && preferredPlatforms.map((platform) => (
               <option key={platform} value={platform}>{platform}</option>
             ))}
           </select>
@@ -145,12 +159,12 @@ const ChatGPT = () => {
         <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
           <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
-          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
-          {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {profile.targetaudience.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Objectifs:</strong> {profile.goals.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {profile.preferredplatforms.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {profile.contenttypes.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
+          {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
+          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetAudience).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {preferredPlatforms.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contentTypes).join(', ')}</p>
         </div>
       )}
     </div>
