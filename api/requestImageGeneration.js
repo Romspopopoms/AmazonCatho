@@ -31,8 +31,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (data.data && data.data.length > 0) {
-      return res.status(200).json({ imageUrl: data.data[0].url });
+    if (data.id) {
+      return res.status(200).json({ taskId: data.id });
     } else {
       throw new Error('Failed to initiate image generation.');
     }

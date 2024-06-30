@@ -11,6 +11,27 @@ const GenerateImageForm = () => {
   const [quality, setQuality] = useState('standard');
   const [style, setStyle] = useState('vivid');
 
+  const checkImageStatus = async (taskId) => {
+    try {
+      const response = await fetch(`/api/checkImageStatus?taskId=${taskId}`);
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setImageUrl(data.imageUrl);
+        setLoading(false);
+      } else if (response.status === 202) {
+        setTimeout(() => checkImageStatus(taskId), 10000); // Vérifier toutes les 10 secondes
+      } else {
+        setError(data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du statut de l\'image:', error);
+      setError('Erreur lors de la vérification du statut de l\'image');
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!prompt) {
@@ -35,8 +56,7 @@ const GenerateImageForm = () => {
       }
 
       const data = await response.json();
-      setImageUrl(data.imageUrl);
-      setLoading(false);
+      checkImageStatus(data.taskId);
     } catch (error) {
       console.error('Erreur de génération d\'image:', error);
       setError('Erreur lors de la génération de l\'image');
