@@ -33,6 +33,7 @@ const GenerateImageForm = () => {
       }
 
       const data = await response.json();
+      console.log('Image URL:', data.imageUrl); // Log pour vérifier l'URL
       setImageUrl(data.imageUrl);
       setLoading(false);
     } catch (error) {
