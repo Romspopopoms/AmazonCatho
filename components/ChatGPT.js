@@ -97,7 +97,10 @@ const ChatGPT = () => {
     return data || [];
   };
 
-  const preferredPlatforms = parseIfNeeded(profile.preferredPlatforms);
+  const targetAudience = parseIfNeeded(profile?.targetAudience);
+  const goals = parseIfNeeded(profile?.goals);
+  const preferredPlatforms = parseIfNeeded(profile?.preferredPlatforms);
+  const contentTypes = parseIfNeeded(profile?.contentTypes);
 
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
@@ -117,7 +120,7 @@ const ChatGPT = () => {
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
             <option value="">Sélectionnez une plateforme</option>
-            {Array.isArray(preferredPlatforms) && preferredPlatforms.map((platform) => (
+            {preferredPlatforms.map((platform) => (
               <option key={platform} value={platform}>{platform}</option>
             ))}
           </select>
@@ -161,10 +164,10 @@ const ChatGPT = () => {
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
           <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
           {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetAudience).join(', ')}</p>
-          <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Public cible:</strong> {targetAudience.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {goals.join(', ')}</p>
           <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {preferredPlatforms.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contentTypes).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {contentTypes.join(', ')}</p>
         </div>
       )}
     </div>
