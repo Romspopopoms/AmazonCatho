@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 const GenerateImageForm = () => {
   const [prompt, setPrompt] = useState('');
@@ -96,7 +97,7 @@ const GenerateImageForm = () => {
       {imageUrl && (
         <div className="mt-4">
           <h3 className="text-white">Image générée:</h3>
-          <img src={imageUrl} alt="Generated" className="mt-2 border border-gray-600 rounded" />
+          <Image src={imageUrl} alt="Generated" width={1024} height={1024} className="mt-2 border border-gray-600 rounded" />
         </div>
       )}
     </div>
