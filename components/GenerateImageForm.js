@@ -66,9 +66,15 @@ const GenerateImageForm = () => {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(imageUrl);
+      const response = await fetch('/api/proxyDownload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imageUrl })
+      });
       if (!response.ok) {
-        throw new Error('Failed to fetch image');
+        throw new Error(`Erreur HTTP! statut: ${response.status}`);
       }
       const blob = await response.blob();
       const link = document.createElement('a');
