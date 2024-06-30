@@ -44,12 +44,13 @@ const GenerateImageForm = () => {
 
   const handleSave = async () => {
     try {
+      const userId = 3; // Replace this with logic to get the actual user ID
       const response = await fetch('/api/saveImage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ imageUrl })
+        body: JSON.stringify({ imageUrl, userId })
       });
 
       if (!response.ok) {
@@ -66,6 +67,9 @@ const GenerateImageForm = () => {
   const handleDownload = async () => {
     try {
       const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
       const blob = await response.blob();
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);

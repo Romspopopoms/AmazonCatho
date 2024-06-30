@@ -1,10 +1,9 @@
-import { getSession } from 'next-auth/react';
 import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false  // Nécessaire si la base de données utilise SSL
   }
 });
 
@@ -13,32 +12,29 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const session = await getSession({ req });
-  if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
+  const { imageUrl, userId } = req.body;
 
-  const { imageUrl } = req.body;
-
-  if (!imageUrl) {
-    return res.status(400).json({ message: 'Image URL is required' });
+  if (!imageUrl || !userId) {
+    return res.status(400).json({ message: 'Image URL and User ID are required' });
   }
 
   try {
-    const userEmail = session.user.email;
-
-    // Mise à jour de la colonne image_urls avec la nouvelle URL
     const query = `
-      UPDATE users
-      SET image_urls = array_append(image_urls, $1)
-      WHERE email = $2
+      UPDATE profiles
+      SET image_urls = image_urls || $1::jsonb
+      WHERE id = $2
+      RETURNING id, image_urls
     `;
-    const params = [imageUrl, userEmail];
-    await pool.query(query, params);
+    const params = [JSON.stringify([imageUrl]), userId];
+    const result = await pool.query(query, params);
 
-    return res.status(200).json({ message: 'Image URL saved successfully' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({ success: true, imageUrls: result.rows[0].image_urls });
   } catch (error) {
-    console.error('Error saving image URL:', error);
+    console.error('Database error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
