@@ -23,9 +23,9 @@ const GenerateImageForm = () => {
       const response = await fetch('/api/requestImageGeneration', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ prompt, size: '1024x1024', model: 'dall-e-3' }),
+        body: JSON.stringify({ prompt, size: '1024x1024', model: 'dall-e-3' })
       });
 
       if (!response.ok) {
@@ -62,6 +62,11 @@ const GenerateImageForm = () => {
           {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Générer'}
         </button>
       </form>
+      {loading && (
+        <div className="flex justify-center mt-4">
+          <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+        </div>
+      )}
       {imageUrl && (
         <div className="mt-4">
           <h3 className="text-white">Image générée:</h3>

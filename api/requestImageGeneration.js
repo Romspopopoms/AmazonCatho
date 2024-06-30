@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -7,22 +7,22 @@ const openai = new OpenAI({
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   const { prompt, size, model } = req.body;
 
   if (!prompt) {
-    return res.status(400).json({ message: "Prompt is required" });
+    return res.status(400).json({ message: 'Prompt is required' });
   }
 
   try {
     const response = await openai.images.generate({
       prompt: prompt,
-      model: model || "dall-e-3",
-      size: size || "1024x1024",
+      model: model || 'dall-e-3',
+      size: size || '1024x1024',
       n: 1,
-      response_format: "url",
+      response_format: 'url'
     });
 
     if (response.data && response.data.length > 0) {
@@ -33,6 +33,6 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error generating image:', error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
