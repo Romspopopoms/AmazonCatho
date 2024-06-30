@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (data && data.data && data.data.length > 0) {
+    if (data.data && data.data.length > 0) {
       const imageUrl = data.data[0].url;
       return res.status(200).json({ imageUrl });
     } else {
