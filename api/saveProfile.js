@@ -1,19 +1,29 @@
 import { Pool } from 'pg';
 
-// Assurez-vous que la variable d'environnement POSTGRES_URL est définie sur Vercel
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false  // Nécessaire si la base de données utilise SSL
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { id, name, activityType, subActivityType, customActivityType, targetAudience, goals, preferredPlatforms, contentTypes, experienceLevel } = req.body;
+  const {
+    id,
+    name,
+    activityType,
+    subActivityType,
+    customActivityType,
+    targetAudience,
+    goals,
+    preferredPlatforms,
+    contentTypes,
+    experienceLevel,
+  } = req.body;
 
   try {
     const query = `
@@ -38,6 +48,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, id: result.rows[0].id });
   } catch (error) {
     console.error('Database error:', error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 }

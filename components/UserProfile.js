@@ -1,47 +1,203 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const UserProfileContext = createContext();
+const UserProfile = ({ saveProfile, profile }) => {
+  const [name, setName] = useState(profile?.name || '');
+  const [activityType, setActivityType] = useState(profile?.activityType || '');
+  const [subActivityType, setSubActivityType] = useState(profile?.subActivityType || '');
+  const [customActivityType, setCustomActivityType] = useState(profile?.customActivityType || '');
+  const [targetAudience, setTargetAudience] = useState(profile?.targetAudience || []);
+  const [goals, setGoals] = useState(profile?.goals || []);
+  const [preferredPlatforms, setPreferredPlatforms] = useState(profile?.preferredPlatforms || []);
+  const [contentTypes, setContentTypes] = useState(profile?.contentTypes || []);
+  const [experienceLevel, setExperienceLevel] = useState(profile?.experienceLevel || '');
 
-export const UserProfileProvider = ({ children }) => {
-  const [profile, setProfile] = useState(null);
-
-  const saveProfile = async (profileData) => {
-    try {
-      const response = await fetch('/api/saveProfile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-      const data = await response.json();
-      if (data.success) {
-        fetchProfile(data.id);
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const profileData = {
+      name,
+      activityType: activityType === 'Autre' ? customActivityType : activityType,
+      subActivityType,
+      targetAudience,
+      goals,
+      preferredPlatforms,
+      contentTypes,
+      experienceLevel,
+    };
+    await saveProfile(profileData);
   };
 
-  const fetchProfile = async (id) => {
-    try {
-      const response = await fetch(`/api/getProfile?id=${id}`);
-      const data = await response.json();
-      if (data.success) {
-        const profileData = data.profile;
-        setProfile(profileData);
-        return profileData;
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
+  const handleCheckboxChange = (event, setState) => {
+    const value = event.target.value;
+    setState(prev => 
+      prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]
+    );
+  };
+
+  const subActivityOptions = {
+    'E-commerce': ['Vente de produits physiques', 'Vente de produits numériques', 'Dropshipping', 'Autre'],
+    'Services': ['Consultation', 'Coaching', 'Design', 'Développement', 'Autre'],
+    'Technologie': ['Développement logiciel', 'Matériel informatique', 'Cyber-sécurité', 'Autre'],
+    'Éducation': ['Cours en ligne', 'Tutorat', 'Formations en présentiel', 'Autre'],
+    'Santé': ['Médecine', 'Fitness', 'Bien-être', 'Nutrition', 'Autre'],
+    'Finance': ['Conseils financiers', 'Comptabilité', 'Investissements', 'Autre'],
+    'Hôtellerie': ['Hôtels', 'Restaurants', 'Voyages', 'Autre'],
   };
 
   return (
-    <UserProfileContext.Provider value={{ profile, saveProfile, fetchProfile }}>
-      {children}
-    </UserProfileContext.Provider>
+    <form onSubmit={handleSubmit} className="p-4 bg-gray-800 rounded-lg w-full max-w-md">
+      <h2 className="text-2xl text-white mb-4">Profil Utilisateur</h2>
+      <div className="mb-4">
+        <label className="block text-white mb-2">Nom:</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-white mb-2">Type d&apos;activité:</label>
+        <select
+          value={activityType}
+          onChange={(e) => setActivityType(e.target.value)}
+          className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+          required
+        >
+          <option value="">Sélectionnez un type d&apos;activité</option>
+          <option value="E-commerce">E-commerce</option>
+          <option value="Services">Services</option>
+          <option value="Technologie">Technologie</option>
+          <option value="Éducation">Éducation</option>
+          <option value="Santé">Santé</option>
+          <option value="Finance">Finance</option>
+          <option value="Hôtellerie">Hôtellerie</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      {activityType && activityType !== 'Autre' && (
+        <div className="mb-4">
+          <label className="block text-white mb-2">Sous-type d&apos;activité:</label>
+          <select
+            value={subActivityType}
+            onChange={(e) => setSubActivityType(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+            required
+          >
+            <option value="">Sélectionnez un sous-type d&apos;activité</option>
+            {subActivityOptions[activityType].map((subType) => (
+              <option key={subType} value={subType}>{subType}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      {activityType === 'Autre' && (
+        <div className="mb-4">
+          <label className="block text-white mb-2">Précisez votre activité:</label>
+          <input
+            type="text"
+            value={customActivityType}
+            onChange={(e) => setCustomActivityType(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+            required
+          />
+        </div>
+      )}
+      {subActivityType === 'Autre' && (
+        <div className="mb-4">
+          <label className="block text-white mb-2">Précisez votre sous-type d&apos;activité:</label>
+          <input
+            type="text"
+            value={customActivityType}
+            onChange={(e) => setCustomActivityType(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+            required
+          />
+        </div>
+      )}
+      <div className="mb-4">
+        <label className="block text-white mb-2">Public cible:</label>
+        <div className="flex flex-wrap gap-2">
+          {['Adolescents', 'Jeunes adultes', 'Adultes', 'Seniors', 'Professionnels', 'Entreprises', 'Parents', 'Enfants', 'Autre'].map(audience => (
+            <label key={audience} className="flex items-center text-white">
+              <input
+                type="checkbox"
+                value={audience}
+                onChange={(e) => handleCheckboxChange(e, setTargetAudience)}
+                className="mr-2"
+                checked={targetAudience.includes(audience)}
+              />
+              {audience}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="mb-4">
+        <label className="block text-white mb-2">Objectifs:</label>
+        <div className="flex flex-wrap gap-2">
+          {['Augmenter la notoriété de la marque', 'Générer des leads', 'Accroître les ventes', 'Améliorer l\'engagement des utilisateurs', 'Développer une communauté', 'Autre'].map(goal => (
+            <label key={goal} className="flex items-center text-white">
+              <input
+                type="checkbox"
+                value={goal}
+                onChange={(e) => handleCheckboxChange(e, setGoals)}
+                className="mr-2"
+                checked={goals.includes(goal)}
+              />
+              {goal}
+            </label>
+          ))}
+        </div>
+      </div>
+      {goals.includes('Autre') && (
+        <div className="mb-4">
+          <label className="block text-white mb-2">Précisez vos objectifs:</label>
+          <input
+            type="text"
+            value={customActivityType}
+            onChange={(e) => setCustomActivityType(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+            required
+          />
+        </div>
+      )}
+      <div className="mb-4">
+        <label className="block text-white mb-2">Plateformes préférées:</label>
+        <div className="flex flex-wrap gap-2">
+          {['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Twitter'].map(platform => (
+            <label key={platform} className="flex items-center text-white">
+              <input
+                type="checkbox"
+                value={platform}
+                onChange={(e) => handleCheckboxChange(e, setPreferredPlatforms)}
+                className="mr-2"
+                checked={preferredPlatforms.includes(platform)}
+              />
+              {platform}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="mb-4">
+        <label className="block text-white mb-2">Types de contenu:</label>
+        <div className="flex flex-wrap gap-2">
+          {['Posts', 'Reels', 'Carrousels', 'Stories', 'Lives'].map(contentType => (
+            <label key={contentType} className="flex items-center text-white">
+              <input
+                type="checkbox"
+                value={contentType}
+                onChange={(e) => handleCheckboxChange(e, setContentTypes)}
+                className="mr-2"
+                checked={contentTypes.includes(contentType)}
+              />
+              {contentType}
+            </label>
+          ))}
+        </div>
+      </div>
+      <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Sauvegarder</button>
+    </form>
   );
 };
 
-export const useUserProfile = () => useContext(UserProfileContext);
+export default UserProfile;

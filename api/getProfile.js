@@ -1,5 +1,4 @@
 import { Pool } from 'pg';
-import { getSession } from 'next-auth/react';
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -9,9 +8,8 @@ const pool = new Pool({
 });
 
 export default async function handler(req, res) {
-  const session = await getSession({ req });
-  if (!session) {
-    return res.status(401).json({ success: false, message: 'Not authenticated' });
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   const { id } = req.query;

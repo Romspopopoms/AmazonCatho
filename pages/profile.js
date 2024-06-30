@@ -24,7 +24,7 @@ export default function Profile() {
       const userId = 3; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
       const loadProfile = async () => {
         const profileData = await fetchProfile(userId); // Récupère le profil utilisateur
-        setUserImages(profileData.image_urls || []);
+        setUserImages(profileData.imageUrls || []);
         setLoading(false);
       };
       loadProfile();
