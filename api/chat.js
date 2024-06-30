@@ -15,24 +15,66 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
-const createPrompt = (messages, platform) => {
+const createPrompt = (messages, platform, category, step) => {
   const conversationHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
   return `
-    You are a social media content creator specialized in creating engaging content for platforms like Instagram, TikTok, Facebook, and LinkedIn. Follow these guidelines:
-    
-    1. Introduce yourself as a social media content creator.
-    2. Ask specific questions to understand the client's needs.
-    3. Tailor the content to the target audience of the specified platform.
-    4. Provide suggestions for posts, reels, carousels, etc.
-    5. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
+    You are a social media content creator specialized in creating engaging content for various social media platforms. Tailor your advice to the selected category and the client's needs.
+
+    Platform: ${platform}
+    Category: ${category}
+
+    Guidelines:
+    1. Start by asking specific questions to understand the client's needs based on the selected category.
+    2. Provide detailed and actionable suggestions.
+    3. Tailor the content to the target audience and platform.
+    4. Ensure that each interaction is unique and does not repeat previous questions or suggestions unless necessary for clarification.
 
     Client's conversation history:
     ${conversationHistory}
 
-    Platform: ${platform}
+    Current Step: ${step}
 
-    Start by asking a relevant question to understand the client's goals and preferences.
+    Based on the current step and the client's responses, continue the conversation by asking the next relevant question or providing the next suggestion.
   `;
+};
+
+const getNextStep = (category, step) => {
+  const steps = {
+    'Création de planning de contenu sur 1 mois': [
+      'Quelle est votre audience cible ?',
+      'Quels sont les principaux objectifs de votre contenu ?',
+      'Quelles sont les dates importantes à inclure dans le planning ?',
+      'Quels types de contenu souhaitez-vous publier (posts, reels, stories) ?',
+    ],
+    'Campagne de promotion de produit': [
+      'Quel est le produit que vous souhaitez promouvoir ?',
+      'Quelle est votre audience cible ?',
+      'Quels sont les messages clés à communiquer ?',
+      'Quels types de contenu souhaitez-vous utiliser (posts, reels, stories, publicités) ?',
+    ],
+    'Développement de la marque personnelle': [
+      'Quels aspects de votre carrière ou de votre entreprise souhaitez-vous mettre en avant ?',
+      'Quelle est votre audience cible ?',
+      'Quels types de contenu souhaitez-vous créer (posts, articles, vidéos) ?',
+    ],
+    'Engagement et interaction avec l\'audience': [
+      'Quel type d\'engagement recherchez-vous (sondages, questions, sessions Q&A) ?',
+      'Quelle est votre audience cible ?',
+      'Quels types de contenu souhaitez-vous utiliser pour engager votre audience ?',
+    ],
+    'Analyse et optimisation des performances': [
+      'Quels sont vos principaux indicateurs de performance sur [plateforme] ?',
+      'Quels objectifs souhaitez-vous atteindre ?',
+      'Souhaitez-vous des recommandations d\'optimisation basées sur vos performances actuelles ?',
+    ],
+    'Création de contenu saisonnier': [
+      'Quel événement ou saison souhaitez-vous cibler ?',
+      'Quel message souhaitez-vous transmettre ?',
+      'Quels types de contenu souhaitez-vous créer (posts, stories, vidéos) ?',
+    ],
+  };
+
+  return steps[category][step];
 };
 
 export default async function handler(req, res) {
@@ -40,9 +82,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message, platform, messages } = req.body;
+  const { message, platform, category, messages, step } = req.body;
 
-  const prompt = createPrompt(messages, platform);
+  const prompt = createPrompt(messages, platform, category, step);
 
   try {
     const completion = await openai.chat.completions.create({
@@ -51,7 +93,8 @@ export default async function handler(req, res) {
       max_tokens: 300,
     });
 
-    res.status(200).json({ response: completion.choices[0].message.content });
+    const nextStep = getNextStep(category, step + 1);
+    res.status(200).json({ response: completion.choices[0].message.content, nextStep });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });

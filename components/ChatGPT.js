@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
   const [input, setInput] = useState('');
+  const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
   const [conversations, setConversations] = useState([[]]);
   const [currentConversation, setCurrentConversation] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [platformError, setPlatformError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
   useEffect(() => {
     if (profile) {
       console.log('Profile received:', profile);
 
-      const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
-
+      const introMessage = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setConversations([[{ role: 'bot', content: introMessage }]]);
     }
   }, [profile]);
@@ -27,12 +27,12 @@ const ChatGPT = () => {
     event.preventDefault();
     if (input.trim() === '') return;
 
-    if (platform === '') {
-      setPlatformError('Veuillez sélectionner une plateforme de réseaux sociaux.');
+    if (category === '') {
+      setCategoryError('Veuillez sélectionner une catégorie.');
       return;
     }
 
-    setPlatformError('');
+    setCategoryError('');
     const newMessage = { role: 'user', content: input };
     const updatedMessages = [...conversations[currentConversation], newMessage];
     const updatedConversations = [...conversations];
@@ -47,7 +47,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform, messages: updatedMessages, profile }),
+        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length }),
       });
 
       if (!response.ok) {
@@ -67,12 +67,13 @@ const ChatGPT = () => {
   };
 
   const startNewConversation = () => {
-    const introMessage = `Bonjour ${profile.name}! Comment puis-je vous aider à atteindre vos objectifs aujourd'hui sur la plateforme de votre choix ?`;
+    const introMessage = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
 
     setConversations([...conversations, [{ role: 'bot', content: introMessage }]]);
     setCurrentConversation(conversations.length);
     setPlatform('');
-    setPlatformError('');
+    setCategory('');
+    setCategoryError('');
   };
 
   const deleteConversation = (index) => {
@@ -85,23 +86,6 @@ const ChatGPT = () => {
     setCurrentConversation(index);
   };
 
-  const parseIfNeeded = (data) => {
-    if (typeof data === 'string') {
-      try {
-        return JSON.parse(data);
-      } catch (error) {
-        console.error('Failed to parse JSON:', error);
-        return [];
-      }
-    }
-    return data || [];
-  };
-
-  const targetAudience = parseIfNeeded(profile?.targetAudience);
-  const goals = parseIfNeeded(profile?.goals);
-  const preferredPlatforms = parseIfNeeded(profile?.preferredPlatforms);
-  const contentTypes = parseIfNeeded(profile?.contentTypes);
-
   return (
     <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
       <ConversationsList
@@ -113,6 +97,22 @@ const ChatGPT = () => {
       />
       <div className="flex-1 flex flex-col p-4">
         <div className="flex items-center mb-4">
+          <label className="mr-2 text-white">Catégorie:</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
+          >
+            <option value="">Sélectionnez une catégorie</option>
+            <option value="Création de planning de contenu sur 1 mois">Création de planning de contenu sur 1 mois</option>
+            <option value="Campagne de promotion de produit">Campagne de promotion de produit</option>
+            <option value="Développement de la marque personnelle">Développement de la marque personnelle</option>
+            <option value="Engagement et interaction avec l'audience">Engagement et interaction avec l&apos;audience</option>
+            <option value="Analyse et optimisation des performances">Analyse et optimisation des performances</option>
+            <option value="Création de contenu saisonnier">Création de contenu saisonnier</option>
+          </select>
+        </div>
+        <div className="flex items-center mb-4">
           <label className="mr-2 text-white">Plateforme:</label>
           <select
             value={platform}
@@ -120,12 +120,13 @@ const ChatGPT = () => {
             className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
           >
             <option value="">Sélectionnez une plateforme</option>
-            {preferredPlatforms.map((platform) => (
-              <option key={platform} value={platform}>{platform}</option>
-            ))}
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Facebook">Facebook</option>
+            <option value="LinkedIn">LinkedIn</option>
           </select>
         </div>
-        {platformError && <p className="text-red-500 mb-4">{platformError}</p>}
+        {categoryError && <p className="text-red-500 mb-4">{categoryError}</p>}
         <div className="flex-1 bg-gray-800 p-4 rounded-lg mb-4 overflow-y-auto">
           {conversations[currentConversation] && conversations[currentConversation].map((message, index) => (
             <div
@@ -162,12 +163,12 @@ const ChatGPT = () => {
         <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
           <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
-          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
-          {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
-          <p className="text-white mb-2"><strong>Public cible:</strong> {targetAudience.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Objectifs:</strong> {goals.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {preferredPlatforms.join(', ')}</p>
-          <p className="text-white mb-2"><strong>Types de contenu:</strong> {contentTypes.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
+          {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
+          <p className="text-white mb-2"><strong>Public cible:</strong> {profile.targetaudience.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {profile.goals.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {profile.preferredplatforms.join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {profile.contenttypes.join(', ')}</p>
         </div>
       )}
     </div>
