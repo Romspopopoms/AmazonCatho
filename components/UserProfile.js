@@ -1,203 +1,134 @@
-import React, { useState, useEffect } from 'react';
+import { useUserProfile } from '../context/UserProfileContext';
+import { useAuth } from '../context/AuthContext';
+import UserProfile from '../components/UserProfile';
+import DisplayProfile from '../components/DisplayProfile';
+import ProfileNavigation from '../components/ProfileNavigation';
+import ImageModal from '../components/ImageModal';
+import { Navbar } from '../components/Navbar';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const UserProfile = ({ saveProfile, profile }) => {
-  const [name, setName] = useState(profile?.name || '');
-  const [activityType, setActivityType] = useState(profile?.activityType || '');
-  const [subActivityType, setSubActivityType] = useState(profile?.subActivityType || '');
-  const [customActivityType, setCustomActivityType] = useState(profile?.customActivityType || '');
-  const [targetAudience, setTargetAudience] = useState(profile?.targetAudience || []);
-  const [goals, setGoals] = useState(profile?.goals || []);
-  const [preferredPlatforms, setPreferredPlatforms] = useState(profile?.preferredPlatforms || []);
-  const [contentTypes, setContentTypes] = useState(profile?.contentTypes || []);
-  const [experienceLevel, setExperienceLevel] = useState(profile?.experienceLevel || '');
+export default function Profile() {
+  const { profile, saveProfile, fetchProfile } = useUserProfile();
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('profile');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [userImages, setUserImages] = useState([]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const profileData = {
-      name,
-      activityType: activityType === 'Autre' ? customActivityType : activityType,
-      subActivityType,
-      targetAudience,
-      goals,
-      preferredPlatforms,
-      contentTypes,
-      experienceLevel,
-    };
-    await saveProfile(profileData);
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push('/AdminPage'); // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
+    } else {
+      const userId = 3; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
+      const loadProfile = async () => {
+        const profileData = await fetchProfile(userId); // Récupère le profil utilisateur
+        setUserImages(profileData.imageUrls || []);
+        setLoading(false);
+      };
+      loadProfile();
+    }
+  }, [isLoggedIn, router, fetchProfile]);
+
+  const handleDownload = async (imageUrl) => {
+    try {
+      const response = await fetch('/api/proxyDownload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imageUrl })
+      });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP! statut: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'saved-image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement de l\'image:', error);
+    }
   };
 
-  const handleCheckboxChange = (event, setState) => {
-    const value = event.target.value;
-    setState(prev => 
-      prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]
-    );
+  const handleDeleteImage = async (imageUrl) => {
+    const userId = 3; // Remplacez ceci par la logique pour obtenir l'ID de l'utilisateur connecté
+    try {
+      const response = await fetch('/api/deleteImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl, userId }),
+      });
+
+      if (response.ok) {
+        setUserImages(userImages.filter((image) => image !== imageUrl));
+      } else {
+        throw new Error('Failed to delete image');
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
   };
 
-  const subActivityOptions = {
-    'E-commerce': ['Vente de produits physiques', 'Vente de produits numériques', 'Dropshipping', 'Autre'],
-    'Services': ['Consultation', 'Coaching', 'Design', 'Développement', 'Autre'],
-    'Technologie': ['Développement logiciel', 'Matériel informatique', 'Cyber-sécurité', 'Autre'],
-    'Éducation': ['Cours en ligne', 'Tutorat', 'Formations en présentiel', 'Autre'],
-    'Santé': ['Médecine', 'Fitness', 'Bien-être', 'Nutrition', 'Autre'],
-    'Finance': ['Conseils financiers', 'Comptabilité', 'Investissements', 'Autre'],
-    'Hôtellerie': ['Hôtels', 'Restaurants', 'Voyages', 'Autre'],
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
   };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
+
+  if (!isLoggedIn || loading) {
+    return null; // Ne rend rien si l'utilisateur n'est pas connecté ou si le profil est en cours de chargement
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-gray-800 rounded-lg w-full max-w-md">
-      <h2 className="text-2xl text-white mb-4">Profil Utilisateur</h2>
-      <div className="mb-4">
-        <label className="block text-white mb-2">Nom:</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-          required
-        />
+    <div className="h-full w-full bg-gradient-to-t bg-red-300 from-slate-800 to-gray-400">
+      <Navbar />
+      <h1 className="mt-24 text-center font-bold text-4xl text-white">Profil Utilisateur</h1>
+      <div className="flex justify-center mt-8">
+        <ProfileNavigation activeSection={activeSection} setActiveSection={setActiveSection} />
       </div>
-      <div className="mb-4">
-        <label className="block text-white mb-2">Type d&apos;activité:</label>
-        <select
-          value={activityType}
-          onChange={(e) => setActivityType(e.target.value)}
-          className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-          required
-        >
-          <option value="">Sélectionnez un type d&apos;activité</option>
-          <option value="E-commerce">E-commerce</option>
-          <option value="Services">Services</option>
-          <option value="Technologie">Technologie</option>
-          <option value="Éducation">Éducation</option>
-          <option value="Santé">Santé</option>
-          <option value="Finance">Finance</option>
-          <option value="Hôtellerie">Hôtellerie</option>
-          <option value="Autre">Autre</option>
-        </select>
-      </div>
-      {activityType && activityType !== 'Autre' && (
-        <div className="mb-4">
-          <label className="block text-white mb-2">Sous-type d&apos;activité:</label>
-          <select
-            value={subActivityType}
-            onChange={(e) => setSubActivityType(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-            required
-          >
-            <option value="">Sélectionnez un sous-type d&apos;activité</option>
-            {subActivityOptions[activityType].map((subType) => (
-              <option key={subType} value={subType}>{subType}</option>
+      <div className="flex justify-center mt-8">
+        {activeSection === 'profile' && (profile ? <DisplayProfile profile={profile} /> : <UserProfile saveProfile={saveProfile} />)}
+        {activeSection === 'images' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {userImages.map((image, index) => (
+              <div key={index} className="bg-gray-800 p-4 rounded-lg">
+                <img
+                  src={image}
+                  alt="Saved"
+                  className="w-full h-auto mb-2 rounded cursor-pointer"
+                  onClick={() => handleImageClick(image)}
+                />
+                <div className="flex justify-between mt-2">
+                  <button
+                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onClick={() => handleDownload(image)}
+                  >
+                    <FontAwesomeIcon icon={faDownload} /> Télécharger
+                  </button>
+                  <button
+                    className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => handleDeleteImage(image)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} /> Supprimer
+                  </button>
+                </div>
+              </div>
             ))}
-          </select>
-        </div>
-      )}
-      {activityType === 'Autre' && (
-        <div className="mb-4">
-          <label className="block text-white mb-2">Précisez votre activité:</label>
-          <input
-            type="text"
-            value={customActivityType}
-            onChange={(e) => setCustomActivityType(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-            required
-          />
-        </div>
-      )}
-      {subActivityType === 'Autre' && (
-        <div className="mb-4">
-          <label className="block text-white mb-2">Précisez votre sous-type d&apos;activité:</label>
-          <input
-            type="text"
-            value={customActivityType}
-            onChange={(e) => setCustomActivityType(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-            required
-          />
-        </div>
-      )}
-      <div className="mb-4">
-        <label className="block text-white mb-2">Public cible:</label>
-        <div className="flex flex-wrap gap-2">
-          {['Adolescents', 'Jeunes adultes', 'Adultes', 'Seniors', 'Professionnels', 'Entreprises', 'Parents', 'Enfants', 'Autre'].map(audience => (
-            <label key={audience} className="flex items-center text-white">
-              <input
-                type="checkbox"
-                value={audience}
-                onChange={(e) => handleCheckboxChange(e, setTargetAudience)}
-                className="mr-2"
-                checked={targetAudience.includes(audience)}
-              />
-              {audience}
-            </label>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
-      <div className="mb-4">
-        <label className="block text-white mb-2">Objectifs:</label>
-        <div className="flex flex-wrap gap-2">
-          {['Augmenter la notoriété de la marque', 'Générer des leads', 'Accroître les ventes', 'Améliorer l\'engagement des utilisateurs', 'Développer une communauté', 'Autre'].map(goal => (
-            <label key={goal} className="flex items-center text-white">
-              <input
-                type="checkbox"
-                value={goal}
-                onChange={(e) => handleCheckboxChange(e, setGoals)}
-                className="mr-2"
-                checked={goals.includes(goal)}
-              />
-              {goal}
-            </label>
-          ))}
-        </div>
-      </div>
-      {goals.includes('Autre') && (
-        <div className="mb-4">
-          <label className="block text-white mb-2">Précisez vos objectifs:</label>
-          <input
-            type="text"
-            value={customActivityType}
-            onChange={(e) => setCustomActivityType(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-            required
-          />
-        </div>
-      )}
-      <div className="mb-4">
-        <label className="block text-white mb-2">Plateformes préférées:</label>
-        <div className="flex flex-wrap gap-2">
-          {['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Twitter'].map(platform => (
-            <label key={platform} className="flex items-center text-white">
-              <input
-                type="checkbox"
-                value={platform}
-                onChange={(e) => handleCheckboxChange(e, setPreferredPlatforms)}
-                className="mr-2"
-                checked={preferredPlatforms.includes(platform)}
-              />
-              {platform}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="mb-4">
-        <label className="block text-white mb-2">Types de contenu:</label>
-        <div className="flex flex-wrap gap-2">
-          {['Posts', 'Reels', 'Carrousels', 'Stories', 'Lives'].map(contentType => (
-            <label key={contentType} className="flex items-center text-white">
-              <input
-                type="checkbox"
-                value={contentType}
-                onChange={(e) => handleCheckboxChange(e, setContentTypes)}
-                className="mr-2"
-                checked={contentTypes.includes(contentType)}
-              />
-              {contentType}
-            </label>
-          ))}
-        </div>
-      </div>
-      <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Sauvegarder</button>
-    </form>
+      {selectedImage && <ImageModal imageUrl={selectedImage} onClose={handleCloseModal} />}
+    </div>
   );
-};
-
-export default UserProfile;
+}

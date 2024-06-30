@@ -14,17 +14,17 @@ const DisplayProfile = ({ profile }) => {
     return data || [];
   };
 
-  const targetAudience = parseIfNeeded(profile.targetaudience);
+  const targetAudience = parseIfNeeded(profile.targetAudience);
   const goals = parseIfNeeded(profile.goals);
-  const preferredPlatforms = parseIfNeeded(profile.preferredplatforms);
-  const contentTypes = parseIfNeeded(profile.contenttypes);
+  const preferredPlatforms = parseIfNeeded(profile.preferredPlatforms);
+  const contentTypes = parseIfNeeded(profile.contentTypes);
 
   return (
     <div className="p-4 bg-gray-800 rounded-lg w-full max-w-md">
       <h2 className="text-2xl text-white mb-4">Profil Utilisateur</h2>
       <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
-      <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activitytype}</p>
-      {profile.subactivitytype && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subactivitytype}</p>}
+      <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
+      {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
       <p className="text-white mb-2"><strong>Public cible:</strong> {targetAudience.join(', ')}</p>
       <p className="text-white mb-2"><strong>Objectifs:</strong> {goals.join(', ')}</p>
       <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {preferredPlatforms.join(', ')}</p>
