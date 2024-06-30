@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faDownload, faSave } from '@fortawesome/free-solid-svg-icons';
 
@@ -7,6 +7,14 @@ const GenerateImageForm = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Récupérer l'URL de l'image depuis localStorage si elle existe
+    const savedImageUrl = localStorage.getItem('generatedImageUrl');
+    if (savedImageUrl) {
+      setImageUrl(savedImageUrl);
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,6 +42,7 @@ const GenerateImageForm = () => {
       const data = await response.json();
       console.log('Image URL:', data.imageUrl); // Log pour vérifier l'URL
       setImageUrl(data.imageUrl);
+      localStorage.setItem('generatedImageUrl', data.imageUrl); // Sauvegarder l'URL de l'image dans localStorage
       setLoading(false);
     } catch (error) {
       console.error('Erreur de génération d\'image:', error);
