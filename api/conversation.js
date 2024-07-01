@@ -1,7 +1,7 @@
-// api/conversation.js
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { handleUserInput } from '../utils/conversationManager'
+import { handleUserInput } from '../utils/conversationManager';
+
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
 

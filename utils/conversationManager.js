@@ -1,4 +1,4 @@
-import { proposeContentPlan } from './conversationPlanning'
+import { proposeContentPlan } from './planningManager';
 
 export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
   let response;
@@ -6,6 +6,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
   let selectedPlan;
   let planDetails;
 
+  // Logique pour gérer les différentes étapes de la conversation
   switch (step) {
     case 1:
       response = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
