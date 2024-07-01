@@ -42,7 +42,7 @@ const ChatGPT = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
