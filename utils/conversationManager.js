@@ -17,12 +17,14 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
       break;
     case 3:
+      const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
       response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
       options = ['Intensif', 'Modéré', 'Léger'];
       break;
     case 4:
       const frequency = userInput.toLowerCase();
-      plans = proposeContentPlan(platform, category, excludedTypes);
+      const objectiveKey = category.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
+      plans = proposeContentPlan(platform, objectiveKey, excludedTypes);
       if (!plans) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
         break;
