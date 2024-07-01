@@ -1,10 +1,18 @@
 import { proposeContentPlan } from './conversationPlanning';
 
+const objectiveKeywords = {
+  'notoriété': 'notoriety',
+  'engagement': 'engagement'
+};
+
 export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
   let response;
   let plans;
   let selectedPlan;
   let planDetails;
+
+  // Convertir l'entrée utilisateur en minuscules pour une comparaison insensible à la casse
+  const userInputLower = userInput.toLowerCase();
 
   // Logique pour gérer les différentes étapes de la conversation
   switch (step) {
@@ -15,11 +23,16 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${platform}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
       break;
     case 3:
+      const objective = objectiveKeywords[userInputLower];
+      if (!objective) {
+        response = "Je n'ai pas compris votre objectif. Veuillez choisir entre 'notoriété' et 'engagement'.";
+        break;
+      }
       response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
       break;
     case 4:
-      const frequency = userInput.toLowerCase();
-      plans = proposeContentPlan(platform, category, excludedTypes);
+      const frequency = userInputLower;
+      plans = proposeContentPlan(platform, objective, excludedTypes);
       if (!plans || plans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
       } else {
