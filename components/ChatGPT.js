@@ -81,6 +81,7 @@ const ChatGPT = () => {
     setPlatform('');
     setCategory('');
     setCategoryError('');
+    setOptions([]);
   };
 
   const deleteConversation = (index) => {

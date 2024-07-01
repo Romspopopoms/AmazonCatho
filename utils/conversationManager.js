@@ -18,17 +18,16 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 3:
       const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
+      plans = proposeContentPlan(platform, objective, excludedTypes);
+      if (!plans || plans.length === 0) {
+        response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
+        break;
+      }
       response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
       options = ['Intensif', 'Modéré', 'Léger'];
       break;
     case 4:
       const frequency = userInput.toLowerCase();
-      const objectiveKey = category.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
-      plans = proposeContentPlan(platform, objectiveKey, excludedTypes);
-      if (!plans) {
-        response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
-        break;
-      }
       selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
       if (!selectedPlan) {
         response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
@@ -41,6 +40,11 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       options = ['Oui', 'Non'];
       break;
     case 5:
+      if (userInput.toLowerCase() !== 'oui') {
+        response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
+        break;
+      }
+
       planDetails = selectedPlan.content.map(item => {
         return {
           ...item,
