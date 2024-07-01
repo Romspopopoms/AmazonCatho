@@ -1,4 +1,4 @@
-import { proposeContentPlan } from './planningManager';
+import { proposeContentPlan } from './conversationPlanning';
 
 export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
   let response;
