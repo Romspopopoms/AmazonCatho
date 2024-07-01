@@ -311,6 +311,8 @@ const filterContentTypes = (content, excludedTypes) => {
 
 const proposeContentPlan = (platform, objective, excludedTypes = []) => {
   const plans = platforms[platform][objective];
+  if (!plans) return null;
+  
   return plans.map(plan => {
     const filteredContent = filterContentTypes(plan.content, excludedTypes);
     return {
