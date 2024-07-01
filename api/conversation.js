@@ -2,7 +2,6 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import { handleUserInput } from '../utils/conversationManager';
 
-// Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
 
 const apiKey = process.env.OPENAI_API_KEY;
@@ -77,12 +76,6 @@ export default async function handler(req, res) {
   const prompt = createPrompt(messages, platform, category, step, profile);
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: prompt }],
-      max_tokens: 300,
-    });
-
     const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
     res.status(200).json({ response, nextStep: step + 1, options });
   } catch (error) {

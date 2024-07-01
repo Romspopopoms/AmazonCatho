@@ -7,13 +7,13 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
   let planDetails;
   let options = [];
 
-  // Logique pour gérer les différentes étapes de la conversation
   switch (step) {
     case 1:
       response = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
+      options = ['Instagram', 'TikTok', 'Facebook', 'LinkedIn'];
       break;
     case 2:
-      response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${platform}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
+      response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${userInput}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
       options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
       break;
     case 3:
@@ -21,6 +21,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       plans = proposeContentPlan(platform, objective, excludedTypes);
       if (!plans || plans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
+        options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
         break;
       }
       response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
@@ -31,7 +32,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
       if (!selectedPlan) {
         response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
-        options = plans.map(plan => plan.name);
+        options = ['Intensif', 'Modéré', 'Léger'];
         break;
       }
       response = `Vous avez choisi le ${selectedPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
