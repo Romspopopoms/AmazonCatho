@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { handleUserInput } from '../../utils/conversationManager';
+import { handleUserInput } from '../utils/conversationManager';
 
 dotenv.config();
 
