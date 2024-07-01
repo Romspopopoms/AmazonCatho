@@ -5,6 +5,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
   let plans;
   let selectedPlan;
   let planDetails;
+  let options = [];
 
   // Logique pour gérer les différentes étapes de la conversation
   switch (step) {
@@ -13,18 +14,29 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 2:
       response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${platform}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
+      options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
       break;
     case 3:
       response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
+      options = ['Intensif', 'Modéré', 'Léger'];
       break;
     case 4:
-      const objective = userInput.toLowerCase();
+      const frequency = userInput.toLowerCase();
       plans = proposeContentPlan(platform, category, excludedTypes);
-      selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(objective));
-      
+      if (!plans) {
+        response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
+        break;
+      }
+      selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
+      if (!selectedPlan) {
+        response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
+        options = plans.map(plan => plan.name);
+        break;
+      }
       response = `Vous avez choisi le ${selectedPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
                  selectedPlan.content.map(item => `- ${item.day || item.week}: ${item.type} - ${item.details}`).join('\n') +
                  `\n\nVoulez-vous générer les descriptions et les hashtags pour ces publications?`;
+      options = ['Oui', 'Non'];
       break;
     case 5:
       planDetails = selectedPlan.content.map(item => {
@@ -48,5 +60,5 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
   }
 
-  return response;
+  return { response, options };
 };

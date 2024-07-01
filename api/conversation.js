@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { handleUserInput } from '../utils/conversationManager';
+import { handleUserInput } from '../../utils/conversationManager';
 
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
@@ -83,8 +83,8 @@ export default async function handler(req, res) {
       max_tokens: 300,
     });
 
-    const response = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
-    res.status(200).json({ response, nextStep: step + 1 });
+    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
+    res.status(200).json({ response, nextStep: step + 1, options });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });

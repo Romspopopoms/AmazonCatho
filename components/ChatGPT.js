@@ -13,6 +13,7 @@ const ChatGPT = () => {
   const [currentConversation, setCurrentConversation] = useState(0);
   const [loading, setLoading] = useState(false);
   const [categoryError, setCategoryError] = useState('');
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     if (profile) {
@@ -59,6 +60,41 @@ const ChatGPT = () => {
       const botMessage = { role: 'bot', content: data.response };
       updatedConversations[currentConversation] = [...updatedMessages, botMessage];
       setConversations(updatedConversations);
+      setOptions(data.options || []); // Mettez à jour les options
+    } catch (error) {
+      console.error('Erreur de communication avec ChatGPT:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOptionClick = async (option) => {
+    const newMessage = { role: 'user', content: option };
+    const updatedMessages = [...conversations[currentConversation], newMessage];
+    const updatedConversations = [...conversations];
+    updatedConversations[currentConversation] = updatedMessages;
+    setConversations(updatedConversations);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/conversation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: option, platform, category, messages: updatedMessages, step: updatedMessages.length, profile }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP! statut: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Response from bot:', data);
+      const botMessage = { role: 'bot', content: data.response };
+      updatedConversations[currentConversation] = [...updatedMessages, botMessage];
+      setConversations(updatedConversations);
+      setOptions(data.options || []); // Mettez à jour les options
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {
@@ -154,6 +190,19 @@ const ChatGPT = () => {
             </div>
           )}
         </div>
+        {options.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleOptionClick(option)}
+                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="flex">
           <input
             type="text"
