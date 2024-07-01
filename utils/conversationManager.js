@@ -1,11 +1,14 @@
 import { proposeContentPlan } from './conversationPlanning';
 
+let currentPlans = null;
+
 export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
   let response;
-  let plans;
   let selectedPlan;
   let planDetails;
   let options = [];
+
+  console.log(`Step: ${step}, UserInput: ${userInput}, Platform: ${platform}, Category: ${category}`);
 
   switch (step) {
     case 1:
@@ -19,8 +22,9 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 3:
       category = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
-      plans = proposeContentPlan(platform, category, excludedTypes);
-      if (!plans || plans.length === 0) {
+      currentPlans = proposeContentPlan(platform, category, excludedTypes);
+      console.log(`Proposed Plans for ${platform} and ${category}:`, currentPlans);
+      if (!currentPlans || currentPlans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
         options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
         break;
@@ -30,7 +34,9 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 4:
       const frequency = userInput.toLowerCase();
-      selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
+      console.log(`Current Plans:`, currentPlans);
+      selectedPlan = currentPlans.find(plan => plan.name.toLowerCase().includes(frequency));
+      console.log(`Selected Plan:`, selectedPlan);
       if (!selectedPlan) {
         response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
         options = ['Intensif', 'Modéré', 'Léger'];
@@ -67,6 +73,8 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
       break;
   }
+
+  console.log(`Response: ${response}, Options:`, options);
 
   return { response, options };
 };

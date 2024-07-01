@@ -43,12 +43,27 @@ const ChatGPT = () => {
     setLoading(true);
 
     try {
+      console.log('Sending request to /api/conversation with body:', {
+        message: input,
+        platform,
+        category,
+        messages: updatedMessages,
+        step: updatedMessages.length,
+        profile
+      });
       const response = await fetch('/api/conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile }),
+        body: JSON.stringify({
+          message: input,
+          platform,
+          category,
+          messages: updatedMessages,
+          step: updatedMessages.length,
+          profile
+        }),
       });
 
       if (!response.ok) {
