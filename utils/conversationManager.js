@@ -13,12 +13,13 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       options = ['Instagram', 'TikTok', 'Facebook', 'LinkedIn'];
       break;
     case 2:
-      response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${userInput}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
+      platform = userInput;
+      response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${platform}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
       options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
       break;
     case 3:
-      const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
-      plans = proposeContentPlan(platform, objective, excludedTypes);
+      category = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
+      plans = proposeContentPlan(platform, category, excludedTypes);
       if (!plans || plans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
         options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
