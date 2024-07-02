@@ -1,14 +1,13 @@
 import { proposeContentPlan } from './conversationPlanning';
 
-let currentPlans = null;
-
 export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
   let response;
+  let plans;
   let selectedPlan;
   let planDetails;
   let options = [];
 
-  console.log(`Step: ${step}, UserInput: ${userInput}, Platform: ${platform}, Category: ${category}`);
+  console.log(`handleUserInput called with step: ${step}, userInput: ${userInput}, platform: ${platform}, category: ${category}`);
 
   switch (step) {
     case 1:
@@ -16,15 +15,15 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       options = ['Instagram', 'TikTok', 'Facebook', 'LinkedIn'];
       break;
     case 2:
-      platform = userInput;
       response = `Quels sont vos objectifs principaux pour ce mois de contenu sur ${platform}? Voulez-vous augmenter la notoriété ou améliorer l'engagement ?`;
       options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
       break;
     case 3:
-      category = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
-      currentPlans = proposeContentPlan(platform, category, excludedTypes);
-      console.log(`Proposed Plans for ${platform} and ${category}:`, currentPlans);
-      if (!currentPlans || currentPlans.length === 0) {
+      const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
+      console.log(`Objective determined: ${objective}`);
+      plans = proposeContentPlan(platform, objective, excludedTypes);
+      console.log(`Plans found: ${JSON.stringify(plans)}`);
+      if (!plans || plans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
         options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
         break;
@@ -34,9 +33,8 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 4:
       const frequency = userInput.toLowerCase();
-      console.log(`Current Plans:`, currentPlans);
-      selectedPlan = currentPlans.find(plan => plan.name.toLowerCase().includes(frequency));
-      console.log(`Selected Plan:`, selectedPlan);
+      selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
+      console.log(`Selected plan: ${JSON.stringify(selectedPlan)}`);
       if (!selectedPlan) {
         response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
         options = ['Intensif', 'Modéré', 'Léger'];
@@ -74,7 +72,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
   }
 
-  console.log(`Response: ${response}, Options:`, options);
-
+  console.log(`Response generated: ${response}`);
+  console.log(`Options generated: ${options}`);
   return { response, options };
 };

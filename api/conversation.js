@@ -75,6 +75,8 @@ export default async function handler(req, res) {
 
   const prompt = createPrompt(messages, platform, category, step, profile);
 
+  console.log(`Sending request to OpenAI with prompt: ${prompt}`);
+
   try {
     const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
     res.status(200).json({ response, nextStep: step + 1, options });

@@ -310,9 +310,7 @@ const filterContentTypes = (content, excludedTypes) => {
 };
 
 const proposeContentPlan = (platform, objective, excludedTypes = []) => {
-  console.log(`Platform: ${platform}, Objective: ${objective}`);
-  const plans = platforms[platform]?.[objective];
-  console.log(`Plans found:`, plans);
+  const plans = platforms[platform] && platforms[platform][objective];
   if (!plans) return null;
 
   return plans.map(plan => {
