@@ -1,9 +1,6 @@
-const OpenAI = require('openai');
-const dotenv = require('dotenv');
-const { handleUserInput } = require('../utils/conversationManager');
-const { GlobalStateProvider } = require('../context/GlobalStateContext');
-const React = require('react');
-const { renderToString } = require('react-dom/server');
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import { handleUserInput } from '../utils/conversationManager';
 
 dotenv.config();
 
@@ -14,7 +11,9 @@ if (!apiKey) {
   throw new Error('Clé API non définie');
 }
 
-const openai = new OpenAI({ apiKey: apiKey });
+const openai = new OpenAI({
+  apiKey: apiKey,
+});
 
 const parseIfNeeded = (data) => {
   if (typeof data === 'string') {
@@ -67,7 +66,7 @@ const createPrompt = (messages, platform, category, step, profile) => {
 `;
 };
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -79,10 +78,10 @@ module.exports = async function handler(req, res) {
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const response = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
-    res.status(200).json(response);
+    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
+    res.status(200).json({ response, nextStep: step + 1, options });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });
   }
-};
+}

@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
-import { GlobalStateContext } from '../context/GlobalStateContext';
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
-  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext);
   const [input, setInput] = useState('');
   const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
@@ -26,8 +24,9 @@ const ChatGPT = () => {
     }
   }, [profile]);
 
-  const handleSubmit = async (userInput) => {
-    if (userInput.trim() === '') return;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (input.trim() === '') return;
 
     if (category === '') {
       setCategoryError('Veuillez sélectionner une catégorie.');
@@ -35,7 +34,7 @@ const ChatGPT = () => {
     }
 
     setCategoryError('');
-    const newMessage = { role: 'user', content: userInput };
+    const newMessage = { role: 'user', content: input };
     const updatedMessages = [...conversations[currentConversation], newMessage];
     const updatedConversations = [...conversations];
     updatedConversations[currentConversation] = updatedMessages;
@@ -44,31 +43,12 @@ const ChatGPT = () => {
     setLoading(true);
 
     try {
-      console.log('Sending request to /api/conversation with body:', {
-        message: userInput,
-        platform,
-        category,
-        messages: updatedMessages,
-        step: updatedMessages.length,
-        profile
-      });
       const response = await fetch('/api/conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: userInput,
-          platform,
-          category,
-          messages: updatedMessages,
-          step: updatedMessages.length,
-          profile,
-          plans,
-          setPlans,
-          selectedPlan,
-          setSelectedPlan,
-        }),
+        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile }),
       });
 
       if (!response.ok) {
@@ -81,10 +61,6 @@ const ChatGPT = () => {
       updatedConversations[currentConversation] = [...updatedMessages, botMessage];
       setConversations(updatedConversations);
       setOptions(data.options || []);
-
-      // Passez les valeurs du contexte à handleUserInput
-      await handleUserInput(profile.id, userInput, updatedMessages.length, platform, category, profile, [], plans, setPlans, selectedPlan, setSelectedPlan);
-
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {
@@ -92,10 +68,9 @@ const ChatGPT = () => {
     }
   };
 
-  const handleOptionClick = async (option) => {
+  const handleOptionClick = (option) => {
     setInput(option);
-    // Appeler handleSubmit directement avec les valeurs nécessaires
-    await handleSubmit(option);
+    handleSubmit({ preventDefault: () => {} }); // Simulate form submission with the selected option
   };
 
   const startNewConversation = () => {
@@ -200,7 +175,7 @@ const ChatGPT = () => {
             </div>
           )}
         </div>
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(input); }} className="flex">
+        <form onSubmit={handleSubmit} className="flex">
           <input
             type="text"
             value={input}
@@ -217,6 +192,18 @@ const ChatGPT = () => {
           </button>
         </form>
       </div>
+      {profile && (
+        <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
+          <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
+          <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
+          <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>
+          {profile.subActivityType && <p className="text-white mb-2"><strong>Sous-type d&apos;activité:</strong> {profile.subActivityType}</p>}
+          <p className="text-white mb-2"><strong>Public cible:</strong> {parseIfNeeded(profile.targetAudience).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Objectifs:</strong> {parseIfNeeded(profile.goals).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Plateformes préférées:</strong> {parseIfNeeded(profile.preferredPlatforms).join(', ')}</p>
+          <p className="text-white mb-2"><strong>Types de contenu:</strong> {parseIfNeeded(profile.contentTypes).join(', ')}</p>
+        </div>
+      )}
     </div>
   );
 };
