@@ -1,33 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ChatVoice = () => {
   const [text, setText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [voice, setVoice] = useState('onyx');
+  const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
+  const [voices, setVoices] = useState([]);
 
-  const voices = [
-    { name: 'Alloy', id: 'alloy', gender: 'male' },
-    { name: 'Echo', id: 'echo', gender: 'male' },
-    { name: 'Fable', id: 'fable', gender: 'female' },
-    { name: 'Onyx', id: 'onyx', gender: 'male' },
-    { name: 'Nova', id: 'nova', gender: 'female' },
-    { name: 'Shimmer', id: 'shimmer', gender: 'female' }
-  ];
+  useEffect(() => {
+    const fetchVoices = async () => {
+      try {
+        const response = await fetch('/api/getVoices');
+        const data = await response.json();
+        if (data.success) {
+          setVoices(data.voices);
+          // Set default voice if not set
+          if (data.voices.length > 0) {
+            setVoice(data.voices[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des voix:', error);
+      }
+    };
 
-  const languages = [
-    { code: 'en', name: 'Anglais' },
-    { code: 'fr', name: 'Français' },
-    { code: 'es', name: 'Espagnol' },
-    { code: 'de', name: 'Allemand' },
-    { code: 'zh', name: 'Chinois' }
-  ];
+    fetchVoices();
+  }, []);
 
   const handleGenerateVoice = async () => {
     setLoading(true);
     try {
-      // Appeler l'API de correction grammaticale
       const correctionResponse = await fetch('/api/correctText', {
         method: 'POST',
         headers: {
@@ -39,7 +42,6 @@ const ChatVoice = () => {
       const correctionData = await correctionResponse.json();
       const correctedText = correctionData.correctedText;
 
-      // Appeler l'API de synthèse vocale avec le texte corrigé
       const response = await fetch('/api/generateVoice', {
         method: 'POST',
         headers: {
@@ -57,62 +59,67 @@ const ChatVoice = () => {
       setAudioUrl(url);
     } catch (error) {
       console.error('Erreur de synthèse vocale:', error);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const playSample = async (sampleVoice) => {
+  const playSample = async (sampleUrl) => {
     setLoading(true);
-    try {
-      const sampleText = "Voici un exemple de voix pour tester.";
-      const response = await fetch('/api/generateVoice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: sampleText, voice: sampleVoice, language }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate voice');
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setAudioUrl(url);
-    } catch (error) {
-      console.error('Erreur de synthèse vocale:', error);
-    }
-    setLoading(false);
+    setAudioUrl('');
+    setAudioUrl(sampleUrl);
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center mt-40 xl:mt-28 gap-y-8">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-900">
+      {loading && (
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="text-white text-2xl">Chargement...</div>
+        </div>
+      )}
+
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Entrez votre texte ici"
-        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full mb-4"
+        disabled={loading}
       />
-      <select value={voice} onChange={(e) => setVoice(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
+      <select
+        value={voice}
+        onChange={(e) => setVoice(e.target.value)}
+        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full mb-4"
+        disabled={loading}
+      >
         {voices.map((v) => (
           <option key={v.id} value={v.id}>{v.name}</option>
         ))}
       </select>
-      <select value={language} onChange={(e) => setLanguage(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
-        {languages.map((lang) => (
-          <option key={lang.code} value={lang.code}>{lang.name}</option>
+      <select
+        value={language}
+        onChange={(e) => setLanguage(e.target.value)}
+        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full mb-4"
+        disabled={loading}
+      >
+        {['en', 'fr', 'es', 'de', 'zh'].map((lang) => (
+          <option key={lang} value={lang}>{lang}</option>
         ))}
       </select>
       <button
         onClick={handleGenerateVoice}
-        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
         disabled={loading}
       >
         {loading ? 'Chargement...' : 'Générer Voix'}
       </button>
       {audioUrl && (
-        <audio controls src={audioUrl} className="mt-4">
+        <audio
+          controls
+          src={audioUrl}
+          className="mt-4"
+          autoPlay
+          onLoadStart={() => setLoading(true)}
+          onCanPlay={() => setLoading(false)}
+        >
           Votre navigateur ne supporte pas l&apos;élément audio.
         </audio>
       )}
@@ -120,24 +127,14 @@ const ChatVoice = () => {
       <div className="mt-8">
         <h3 className="text-xl text-white mb-4">Échantillons de voix</h3>
         <div className="flex flex-wrap gap-4">
-          {voices.filter(v => v.gender === 'male').map((v) => (
+          {voices.map((v) => (
             <button
               key={v.id}
-              onClick={() => playSample(v.id)}
-              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={() => playSample(v.url)}
+              className={`p-2 text-white rounded ${v.gender === 'male' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-pink-500 hover:bg-pink-600'}`}
               disabled={loading}
             >
-              {v.name} (Masculin)
-            </button>
-          ))}
-          {voices.filter(v => v.gender === 'female').map((v) => (
-            <button
-              key={v.id}
-              onClick={() => playSample(v.id)}
-              className="p-2 bg-pink-500 text-white rounded hover:bg-pink-600"
-              disabled={loading}
-            >
-              {v.name} (Féminin)
+              {v.name} ({v.gender === 'male' ? 'Masculin' : 'Féminin'})
             </button>
           ))}
         </div>
