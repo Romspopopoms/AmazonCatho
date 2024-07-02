@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import OpenAI from "openai";
 
 const ChatVoice = () => {
   const [text, setText] = useState('');
@@ -23,26 +22,20 @@ const ChatVoice = () => {
     { code: 'es', name: 'Espagnol' },
     { code: 'de', name: 'Allemand' },
     { code: 'zh', name: 'Chinois' }
-    // Ajouter d'autres langues courantes ici
   ];
 
   const handleGenerateVoice = async () => {
     setLoading(true);
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true
-    });
     try {
-      const response = await openai.audio.speech.create({
-        model: "tts-1-hd",
-        voice: voice,
-        input: text,
-        language: language
+      const response = await fetch('/api/generateVoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text, voice, language })
       });
-      const buffer = Buffer.from(await response.arrayBuffer());
-      const blob = new Blob([buffer], { type: 'audio/mp3' });
-      const url = URL.createObjectURL(blob);
-      setAudioUrl(url);
+      const data = await response.json();
+      setAudioUrl(data.audioUrl);
     } catch (error) {
       console.error('Erreur de synthèse vocale:', error);
     }
