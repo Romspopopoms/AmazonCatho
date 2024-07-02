@@ -1,4 +1,3 @@
-// context/GlobalStateContext.js
 const React = require('react');
 const { createContext, useState } = React;
 
