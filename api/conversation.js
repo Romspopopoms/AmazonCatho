@@ -3,9 +3,9 @@ const OpenAI = require('openai');
 const dotenv = require('dotenv');
 const React = require('react');
 const { renderToString } = require('react-dom/server');
-const { withGlobalState, HandleUserInputWithGlobalState } = require('../../utils/withGlobalState');
-const { handleUserInput } = require('../../utils/conversationManager');
-const { GlobalStateProvider } = require('../../context/GlobalStateContext');
+const { withGlobalState, HandleUserInputWithGlobalState } = require('../utils/withGlobalState');
+const { handleUserInput } = require('../utils/conversationManager');
+const { GlobalStateProvider } = require('../context/GlobalStateContext');
 
 dotenv.config();
 
