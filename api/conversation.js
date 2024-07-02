@@ -1,4 +1,3 @@
-// pages/api/conversation.js
 const OpenAI = require('openai');
 const dotenv = require('dotenv');
 const React = require('react');
@@ -114,4 +113,4 @@ module.exports = async function handler(req, res) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });
   }
-}
+};
