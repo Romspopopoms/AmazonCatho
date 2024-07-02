@@ -305,6 +305,7 @@ const platforms = {
   }
 };
 
+
 const filterContentTypes = (content, excludedTypes) => {
   return content.filter(item => !excludedTypes.includes(item.type));
 };
@@ -330,4 +331,4 @@ const proposeContentPlan = (platform, objective, excludedTypes = []) => {
   return filteredPlans;
 };
 
-export { proposeContentPlan };
+module.exports = { proposeContentPlan };

@@ -1,9 +1,8 @@
-import React, { createContext, useState } from 'react';
+const React = require('react');
+const { createContext, useState } = React;
 
-// Crée le contexte global
 const GlobalStateContext = createContext();
 
-// Crée le fournisseur de contexte global
 const GlobalStateProvider = ({ children }) => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -15,4 +14,4 @@ const GlobalStateProvider = ({ children }) => {
   );
 };
 
-export { GlobalStateContext, GlobalStateProvider };
+module.exports = { GlobalStateContext, GlobalStateProvider };

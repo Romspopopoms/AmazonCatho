@@ -1,5 +1,3 @@
-// utils/conversationManager.js
-
 const { proposeContentPlan } = require('./conversationPlanning');
 
 const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes, context) => {
@@ -26,12 +24,12 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
         const proposedPlans = proposeContentPlan(platform, objective, excludedTypes);
         console.log(`Proposed Plans: ${JSON.stringify(proposedPlans)}`);
         if (!proposedPlans || proposedPlans.length === 0) {
-          response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${objective}. Pouvez-vous choisir une autre option ?`;
+          response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
           options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
           break;
         }
         setPlans(proposedPlans); // Met à jour les plans dans le contexte global
-        console.log(`Updated Plans after setPlans: ${JSON.stringify(proposedPlans)}`);
+        console.log(`Updated Plans: ${JSON.stringify(proposedPlans)}`);
         response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
         options = ['Intensif', 'Modéré', 'Léger'];
         break;
@@ -45,7 +43,7 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
           break;
         }
         setSelectedPlan(chosenPlan); // Met à jour le plan sélectionné dans le contexte global
-        console.log(`Updated Selected Plan: ${JSON.stringify(chosenPlan)}`);
+        console.log(`Updated Selected Plan: ${JSON.stringify(selectedPlan)}`);
         response = `Vous avez choisi le ${chosenPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
                    chosenPlan.content.map(item => `- ${item.day || item.week}: ${item.type} - ${item.details}`).join('\n') +
                    `\n\nVoulez-vous générer les descriptions et les hashtags pour ces publications?`;
