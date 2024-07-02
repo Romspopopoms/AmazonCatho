@@ -1,9 +1,10 @@
 const { proposeContentPlan } = require('./conversationPlanning');
 
-const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes) => {
+const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes, context) => {
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = context;
+
   let response;
   let options = [];
-  let context;
 
   try {
     switch (step) {
@@ -18,24 +19,24 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
       case 3:
         const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
         const proposedPlans = proposeContentPlan(platform, objective, excludedTypes);
-        context = { plans: proposedPlans, setPlans: () => {} }; // Mock setPlans
         if (!proposedPlans || proposedPlans.length === 0) {
           response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
           options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
           break;
         }
+        setPlans(proposedPlans); // Met à jour les plans dans le contexte global
         response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
         options = ['Intensif', 'Modéré', 'Léger'];
         break;
       case 4:
         const frequency = userInput.toLowerCase();
-        const chosenPlan = context.plans.find(plan => plan.name.toLowerCase().includes(frequency));
-        context.setSelectedPlan(chosenPlan); // Mock setSelectedPlan
+        const chosenPlan = plans ? plans.find(plan => plan.name.toLowerCase().includes(frequency)) : null;
         if (!chosenPlan) {
           response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
           options = ['Intensif', 'Modéré', 'Léger'];
           break;
         }
+        setSelectedPlan(chosenPlan); // Met à jour le plan sélectionné dans le contexte global
         response = `Vous avez choisi le ${chosenPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
                    chosenPlan.content.map(item => `- ${item.day || item.week}: ${item.type} - ${item.details}`).join('\n') +
                    `\n\nVoulez-vous générer les descriptions et les hashtags pour ces publications?`;
@@ -46,14 +47,14 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
           response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
           break;
         }
-        const planDetails = context.selectedPlan.content.map(item => {
+        const planDetails = selectedPlan ? selectedPlan.content.map(item => {
           return {
             ...item,
             description: `Nous avons adapté ce contenu pour correspondre à vos préférences: ${item.details}.`,
             hashtags: [`#${platform}`, `#${category}`, `#${item.type}`, '#YourBrand'].join(', '),
             prompt: `Generate content for a ${item.type} focusing on ${item.details} for ${platform}.`
           };
-        });
+        }) : [];
         response = `Voici les descriptions et les hashtags pour chaque publication:\n\n` +
                    planDetails.map(item => `${item.day || item.week}:\n` +
                                            `Type: ${item.type}\n` +

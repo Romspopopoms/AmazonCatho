@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
+import { GlobalStateContext } from '../context/GlobalStateContext'; // Importer le contexte global
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext); // Utiliser le contexte global
   const [input, setInput] = useState('');
   const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
@@ -48,7 +50,7 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile }),
+        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile, plans, selectedPlan }),
       });
 
       if (!response.ok) {
@@ -61,6 +63,11 @@ const ChatGPT = () => {
       updatedConversations[currentConversation] = [...updatedMessages, botMessage];
       setConversations(updatedConversations);
       setOptions(data.options || []);
+
+      // Mise à jour des plans et du plan sélectionné dans le contexte global
+      if (data.plans) setPlans(data.plans);
+      if (data.selectedPlan) setSelectedPlan(data.selectedPlan);
+
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {

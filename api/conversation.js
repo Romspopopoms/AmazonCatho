@@ -71,15 +71,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message, platform, category, messages, step, profile, excludedTypes } = req.body;
+  const { message, platform, category, messages, step, profile, plans, selectedPlan, excludedTypes } = req.body;
 
   const prompt = createPrompt(messages, platform, category, step, profile);
 
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
-    res.status(200).json({ response, nextStep: step + 1, options });
+    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes, { plans, setPlans, selectedPlan, setSelectedPlan });
+    res.status(200).json({ response, nextStep: step + 1, options, plans, selectedPlan });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });
