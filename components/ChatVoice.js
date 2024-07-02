@@ -35,6 +35,10 @@ const ChatVoice = () => {
         body: JSON.stringify({ text, voice, language })
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to generate voice');
+      }
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
