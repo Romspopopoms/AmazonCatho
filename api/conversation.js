@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { withGlobalState, HandleUserInputWithGlobalState } from '../../utils/withGlobalState';
+import { withGlobalState, HandleUserInputWithGlobalState } from '../utils/withGlobalState';
 
 dotenv.config();
 
