@@ -34,8 +34,10 @@ const ChatVoice = () => {
         },
         body: JSON.stringify({ text, voice, language })
       });
-      const data = await response.json();
-      setAudioUrl(data.audioUrl);
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
     } catch (error) {
       console.error('Erreur de synthèse vocale:', error);
     }

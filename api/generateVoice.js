@@ -25,10 +25,9 @@ export default async function handler(req, res) {
     });
 
     const buffer = Buffer.from(await response.arrayBuffer());
-    const blob = new Blob([buffer], { type: 'audio/mp3' });
-    const url = URL.createObjectURL(blob);
-
-    res.status(200).json({ audioUrl: url });
+    
+    res.setHeader('Content-Type', 'audio/mp3');
+    res.send(buffer);
   } catch (error) {
     console.error('Erreur de synthèse vocale:', error);
     res.status(500).json({ message: 'Internal server error' });
