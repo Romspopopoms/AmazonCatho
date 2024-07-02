@@ -314,7 +314,7 @@ const proposeContentPlan = (platform, objective, excludedTypes = []) => {
   const plans = platforms[platform] && platforms[platform][objective];
   if (!plans) {
     console.log('No plans found for given platform and objective.');
-    return null;
+    return [];
   }
 
   const filteredPlans = plans.map(plan => {
