@@ -15,7 +15,7 @@ const ChatVoice = () => {
         const data = await response.json();
         if (data.success) {
           setVoices(data.voices);
-          // Set default voice if not set
+          console.log('Voices fetched:', data.voices); // Log for debugging
           if (data.voices.length > 0) {
             setVoice(data.voices[0].id);
           }
@@ -59,15 +59,19 @@ const ChatVoice = () => {
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
+      console.log('Audio URL generated:', url); // Log for debugging
     } catch (error) {
       console.error('Erreur de synthèse vocale:', error);
+      setLoading(false); // Ensure loading is set to false on error
+    } finally {
       setLoading(false);
     }
   };
 
-  const playSample = (sampleUrl) => {
+  const playSample = async (sampleUrl) => {
     setLoading(true);
     setAudioUrl('');
+    console.log('Playing sample URL:', sampleUrl); // Log for debugging
     setAudioUrl(sampleUrl);
   };
 
