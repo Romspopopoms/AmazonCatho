@@ -1,8 +1,8 @@
+// utils/withGlobalState.js
 const React = require('react');
 const { useContext } = require('react');
 const { GlobalStateProvider, GlobalStateContext } = require('../context/GlobalStateContext');
 
-// Fonction wrapper sans JSX
 const withGlobalState = (Component) => {
   return function WrappedComponent(props) {
     return React.createElement(
@@ -13,11 +13,9 @@ const withGlobalState = (Component) => {
   };
 };
 
-// Composant pour gérer l'entrée utilisateur avec le contexte global
 const HandleUserInputWithGlobalState = (props) => {
   const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext);
-  
-  // Appel de la fonction handleUserInput avec le contexte global
+
   handleUserInput(
     props.userId,
     props.userInput,

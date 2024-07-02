@@ -1,10 +1,9 @@
 const OpenAI = require('openai');
 const dotenv = require('dotenv');
-const React = require('react');
-const { renderToString } = require('react-dom/server');
-const { withGlobalState, HandleUserInputWithGlobalState } = require('../utils/withGlobalState');
 const { handleUserInput } = require('../utils/conversationManager');
 const { GlobalStateProvider } = require('../context/GlobalStateContext');
+const React = require('react');
+const { renderToString } = require('react-dom/server');
 
 dotenv.config();
 
@@ -15,9 +14,7 @@ if (!apiKey) {
   throw new Error('Clé API non définie');
 }
 
-const openai = new OpenAI({
-  apiKey: apiKey,
-});
+const openai = new OpenAI({ apiKey: apiKey });
 
 const parseIfNeeded = (data) => {
   if (typeof data === 'string') {
@@ -82,33 +79,8 @@ module.exports = async function handler(req, res) {
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const handleWithGlobalState = async () => {
-      return new Promise((resolve, reject) => {
-        renderToString(
-          React.createElement(
-            GlobalStateProvider, 
-            null, 
-            React.createElement(
-              HandleUserInputWithGlobalState, 
-              { 
-                userId: profile.id, 
-                userInput: message, 
-                step, 
-                platform, 
-                category, 
-                profile, 
-                excludedTypes, 
-                resolve, 
-                reject 
-              }
-            )
-          )
-        );
-      });
-    };
-
-    const { response, options } = await handleWithGlobalState();
-    res.status(200).json({ response, nextStep: step + 1, options });
+    const response = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
+    res.status(200).json(response);
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });

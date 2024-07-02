@@ -1,14 +1,9 @@
-// utils/conversationManager.js
-import { proposeContentPlan } from './conversationPlanning';
+const { proposeContentPlan } = require('./conversationPlanning');
 
-export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = [], context) => {
-  const { plans, setPlans, selectedPlan, setSelectedPlan } = context;
-
+const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes) => {
   let response;
-  let planDetails;
   let options = [];
-
-  console.log(`handleUserInput called with step: ${step}, userInput: ${userInput}, platform: ${platform}, category: ${category}`);
+  let context;
 
   try {
     switch (step) {
@@ -22,10 +17,8 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
         break;
       case 3:
         const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
-        console.log(`Objective determined: ${objective}`);
         const proposedPlans = proposeContentPlan(platform, objective, excludedTypes);
-        setPlans(proposedPlans); // Stocker les plans dans le contexte global
-        console.log(`Plans found: ${JSON.stringify(proposedPlans)}`);
+        context = { plans: proposedPlans, setPlans: () => {} }; // Mock setPlans
         if (!proposedPlans || proposedPlans.length === 0) {
           response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
           options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
@@ -35,11 +28,9 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
         options = ['Intensif', 'Modéré', 'Léger'];
         break;
       case 4:
-        console.log(`Plans in context: ${JSON.stringify(plans)}`);
         const frequency = userInput.toLowerCase();
-        const chosenPlan = plans?.find(plan => plan.name.toLowerCase().includes(frequency));
-        setSelectedPlan(chosenPlan); // Stocker le plan sélectionné dans le contexte global
-        console.log(`Selected plan: ${JSON.stringify(chosenPlan)}`);
+        const chosenPlan = context.plans.find(plan => plan.name.toLowerCase().includes(frequency));
+        context.setSelectedPlan(chosenPlan); // Mock setSelectedPlan
         if (!chosenPlan) {
           response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
           options = ['Intensif', 'Modéré', 'Léger'];
@@ -55,8 +46,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
           response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
           break;
         }
-
-        planDetails = selectedPlan.content.map(item => {
+        const planDetails = context.selectedPlan.content.map(item => {
           return {
             ...item,
             description: `Nous avons adapté ce contenu pour correspondre à vos préférences: ${item.details}.`,
@@ -64,7 +54,6 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
             prompt: `Generate content for a ${item.type} focusing on ${item.details} for ${platform}.`
           };
         });
-
         response = `Voici les descriptions et les hashtags pour chaque publication:\n\n` +
                    planDetails.map(item => `${item.day || item.week}:\n` +
                                            `Type: ${item.type}\n` +
@@ -76,12 +65,12 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
         response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
         break;
     }
-
-    console.log(`Response generated: ${response}`);
-    console.log(`Options generated: ${options}`);
   } catch (error) {
     console.error('Erreur de traitement dans handleUserInput:', error);
     throw error;
   }
+
   return { response, options };
 };
+
+module.exports = { handleUserInput };
