@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const ChatVoice = () => {
   const [text, setText] = useState('');
@@ -7,6 +7,7 @@ const ChatVoice = () => {
   const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
   const [voices, setVoices] = useState([]);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const fetchVoices = async () => {
@@ -15,7 +16,7 @@ const ChatVoice = () => {
         const data = await response.json();
         if (data.success) {
           setVoices(data.voices);
-          console.log('Voices fetched:', data.voices); // Log for debugging
+          console.log('Voices fetched:', data.voices);
           if (data.voices.length > 0) {
             setVoice(data.voices[0].id);
           }
@@ -59,21 +60,40 @@ const ChatVoice = () => {
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
-      console.log('Audio URL generated:', url); // Log for debugging
+      console.log('Audio URL generated:', url);
     } catch (error) {
       console.error('Erreur de synthèse vocale:', error);
-      setLoading(false); // Ensure loading is set to false on error
+      setLoading(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const playSample = async (sampleUrl) => {
+  const playSample = (sampleUrl) => {
     setLoading(true);
     setAudioUrl('');
-    console.log('Playing sample URL:', sampleUrl); // Log for debugging
+    console.log('Playing sample URL:', sampleUrl);
     setAudioUrl(sampleUrl);
   };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      const handleCanPlayThrough = () => {
+        setLoading(false);
+        audio.play();
+      };
+      const handleError = () => setLoading(false);
+
+      audio.addEventListener('canplaythrough', handleCanPlayThrough);
+      audio.addEventListener('error', handleError);
+
+      return () => {
+        audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+        audio.removeEventListener('error', handleError);
+      };
+    }
+  }, [audioUrl]);
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-900">
@@ -119,13 +139,11 @@ const ChatVoice = () => {
       </button>
       {audioUrl && (
         <audio
+          ref={audioRef}
           controls
           src={audioUrl}
           className="mt-4"
           autoPlay
-          onLoadStart={() => setLoading(true)}
-          onCanPlay={() => setLoading(false)}
-          onError={() => setLoading(false)}
         >
           Votre navigateur ne supporte pas l&apos;élément audio.
         </audio>
