@@ -1,3 +1,4 @@
+// pages/_app.js
 import { Navbar } from '../components/Navbar';
 import { AuthProvider } from '../context/AuthContext';
 import { UserProfileProvider } from '../context/UserProfileContext';
