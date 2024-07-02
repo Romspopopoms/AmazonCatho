@@ -4,7 +4,7 @@ const ChatVoice = () => {
   const [text, setText] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [voice, setVoice] = useState('onyx');
+  const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
   const [voices, setVoices] = useState([]);
 
@@ -15,6 +15,10 @@ const ChatVoice = () => {
         const data = await response.json();
         if (data.success) {
           setVoices(data.voices);
+          // Set default voice if not set
+          if (data.voices.length > 0) {
+            setVoice(data.voices[0].id);
+          }
         }
       } catch (error) {
         console.error('Erreur lors de la récupération des voix:', error);
@@ -59,6 +63,10 @@ const ChatVoice = () => {
     setLoading(false);
   };
 
+  const playSample = (sampleUrl) => {
+    setAudioUrl(sampleUrl);
+  };
+
   return (
     <div className="relative flex flex-col items-center justify-center mt-40 xl:mt-28 gap-y-8">
       <textarea
@@ -73,8 +81,8 @@ const ChatVoice = () => {
         ))}
       </select>
       <select value={language} onChange={(e) => setLanguage(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
-        {languages.map((lang) => (
-          <option key={lang.code} value={lang.code}>{lang.name}</option>
+        {['en', 'fr', 'es', 'de', 'zh'].map((lang) => (
+          <option key={lang} value={lang}>{lang}</option>
         ))}
       </select>
       <button
@@ -93,24 +101,14 @@ const ChatVoice = () => {
       <div className="mt-8">
         <h3 className="text-xl text-white mb-4">Échantillons de voix</h3>
         <div className="flex flex-wrap gap-4">
-          {voices.filter(v => v.gender === 'male').map((v) => (
+          {voices.map((v) => (
             <button
               key={v.id}
-              onClick={() => setAudioUrl(v.url)}
-              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={() => playSample(v.url)}
+              className={`p-2 text-white rounded ${v.gender === 'male' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-pink-500 hover:bg-pink-600'}`}
               disabled={loading}
             >
-              {v.name} (Masculin)
-            </button>
-          ))}
-          {voices.filter(v => v.gender === 'female').map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setAudioUrl(v.url)}
-              className="p-2 bg-pink-500 text-white rounded hover:bg-pink-600"
-              disabled={loading}
-            >
-              {v.name} (Féminin)
+              {v.name} ({v.gender === 'male' ? 'Masculin' : 'Féminin'})
             </button>
           ))}
         </div>
