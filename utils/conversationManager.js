@@ -30,7 +30,7 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
         break;
       case 4:
         const frequency = userInput.toLowerCase();
-        const chosenPlan = plans ? plans.find(plan => plan.name.toLowerCase().includes(frequency)) : null;
+        const chosenPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
         if (!chosenPlan) {
           response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
           options = ['Intensif', 'Modéré', 'Léger'];
@@ -47,14 +47,14 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
           response = "Merci pour votre participation! Votre planning de contenu est prêt à être utilisé.";
           break;
         }
-        const planDetails = selectedPlan ? selectedPlan.content.map(item => {
+        const planDetails = selectedPlan.content.map(item => {
           return {
             ...item,
             description: `Nous avons adapté ce contenu pour correspondre à vos préférences: ${item.details}.`,
             hashtags: [`#${platform}`, `#${category}`, `#${item.type}`, '#YourBrand'].join(', '),
             prompt: `Generate content for a ${item.type} focusing on ${item.details} for ${platform}.`
           };
-        }) : [];
+        });
         response = `Voici les descriptions et les hashtags pour chaque publication:\n\n` +
                    planDetails.map(item => `${item.day || item.week}:\n` +
                                            `Type: ${item.type}\n` +
