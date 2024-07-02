@@ -6,7 +6,7 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
   let options = [];
 
   console.log(`handleUserInput called with step: ${step}, userInput: ${userInput}, platform: ${platform}, category: ${category}`);
-  
+
   try {
     switch (step) {
       case 1:
@@ -32,8 +32,9 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
         options = ['Intensif', 'Modéré', 'Léger'];
         break;
       case 4:
+        console.log(`Plans in context: ${JSON.stringify(plans)}`);
         const frequency = userInput.toLowerCase();
-        const chosenPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
+        const chosenPlan = plans?.find(plan => plan.name.toLowerCase().includes(frequency));
         setSelectedPlan(chosenPlan); // Stocker le plan sélectionné dans le contexte global
         console.log(`Selected plan: ${JSON.stringify(chosenPlan)}`);
         if (!chosenPlan) {
