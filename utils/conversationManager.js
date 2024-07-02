@@ -1,6 +1,9 @@
+// utils/conversationManager.js
 import { proposeContentPlan } from './conversationPlanning';
 
-export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = [], plans, setPlans, selectedPlan, setSelectedPlan) => {
+export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = [], context) => {
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = context;
+
   let response;
   let planDetails;
   let options = [];

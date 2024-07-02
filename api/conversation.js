@@ -1,6 +1,9 @@
+// pages/api/conversation.js
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { handleUserInput } from '../utils/conversationManager';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { withGlobalState, HandleUserInputWithGlobalState } from '../../utils/withGlobalState';
 
 dotenv.config();
 
@@ -78,7 +81,26 @@ export default async function handler(req, res) {
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes);
+    const promise = new Promise((resolve, reject) => {
+      renderToString(
+        React.createElement(
+          withGlobalState(HandleUserInputWithGlobalState), 
+          { 
+            userId: profile.id, 
+            userInput: message, 
+            step, 
+            platform, 
+            category, 
+            profile, 
+            excludedTypes, 
+            resolve, 
+            reject 
+          }
+        )
+      );
+    });
+
+    const { response, options } = await promise;
     res.status(200).json({ response, nextStep: step + 1, options });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
