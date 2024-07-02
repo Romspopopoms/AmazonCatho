@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
 import { GlobalStateContext } from '../context/GlobalStateContext';
-import { handleUserInput } from '../utils/handleUserInput';
+import { handleUserInput } from '../utils/conversationManager';
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
