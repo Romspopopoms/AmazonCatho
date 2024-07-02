@@ -1,9 +1,11 @@
 // pages/api/conversation.js
-import OpenAI from 'openai';
-import dotenv from 'dotenv';
-import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { withGlobalState, HandleUserInputWithGlobalState } from '../utils/withGlobalState';
+const OpenAI = require('openai');
+const dotenv = require('dotenv');
+const React = require('react');
+const { renderToString } = require('react-dom/server');
+const { withGlobalState, HandleUserInputWithGlobalState } = require('../../utils/withGlobalState');
+const { handleUserInput } = require('../../utils/conversationManager');
+const { GlobalStateProvider } = require('../../context/GlobalStateContext');
 
 dotenv.config();
 
@@ -69,7 +71,7 @@ const createPrompt = (messages, platform, category, step, profile) => {
 `;
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -81,26 +83,32 @@ export default async function handler(req, res) {
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const promise = new Promise((resolve, reject) => {
-      renderToString(
-        React.createElement(
-          withGlobalState(HandleUserInputWithGlobalState), 
-          { 
-            userId: profile.id, 
-            userInput: message, 
-            step, 
-            platform, 
-            category, 
-            profile, 
-            excludedTypes, 
-            resolve, 
-            reject 
-          }
-        )
-      );
-    });
+    const handleWithGlobalState = async () => {
+      return new Promise((resolve, reject) => {
+        renderToString(
+          React.createElement(
+            GlobalStateProvider, 
+            null, 
+            React.createElement(
+              HandleUserInputWithGlobalState, 
+              { 
+                userId: profile.id, 
+                userInput: message, 
+                step, 
+                platform, 
+                category, 
+                profile, 
+                excludedTypes, 
+                resolve, 
+                reject 
+              }
+            )
+          )
+        );
+      });
+    };
 
-    const { response, options } = await promise;
+    const { response, options } = await handleWithGlobalState();
     res.status(200).json({ response, nextStep: step + 1, options });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);

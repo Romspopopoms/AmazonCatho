@@ -1,6 +1,7 @@
 // utils/withGlobalState.js
-import React, { useContext } from 'react';
-import { GlobalStateProvider, GlobalStateContext } from '../context/GlobalStateContext';
+const React = require('react');
+const { useContext } = require('react');
+const { GlobalStateProvider, GlobalStateContext } = require('../context/GlobalStateContext');
 
 const withGlobalState = (Component) => {
   return function WrappedComponent(props) {
@@ -22,4 +23,4 @@ const HandleUserInputWithGlobalState = ({ userId, userInput, step, platform, cat
   return null;
 };
 
-export { withGlobalState, HandleUserInputWithGlobalState };
+module.exports = { withGlobalState, HandleUserInputWithGlobalState };

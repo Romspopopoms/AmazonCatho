@@ -1,12 +1,13 @@
 // context/GlobalStateContext.js
-import React, { createContext, useState } from 'react';
+const React = require('react');
+const { createContext, useState } = React;
 
 // Créez le contexte
-export const GlobalStateContext = createContext();
+const GlobalStateContext = createContext();
 
 // Créez un fournisseur de contexte
-export const GlobalStateProvider = ({ children }) => {
-  const [plans, setPlans] = useState([]);
+const GlobalStateProvider = ({ children }) => {
+  const [plans, setPlans] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   return (
@@ -15,3 +16,5 @@ export const GlobalStateProvider = ({ children }) => {
     </GlobalStateContext.Provider>
   );
 };
+
+module.exports = { GlobalStateContext, GlobalStateProvider };
