@@ -69,11 +69,23 @@ const ChatVoice = () => {
     }
   };
 
-  const playSample = (sampleUrl) => {
+  const playSample = async (sampleUrl) => {
     setLoading(true);
-    setAudioUrl('');
-    console.log('Playing sample URL:', sampleUrl);
-    setAudioUrl(sampleUrl);
+    try {
+      const response = await fetch(sampleUrl);
+      if (!response.ok) {
+        throw new Error('Failed to load sample');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+      console.log('Playing sample URL:', url);
+    } catch (error) {
+      console.error('Erreur lors de la lecture de l\'échantillon:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
