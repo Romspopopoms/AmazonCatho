@@ -8,12 +8,12 @@ const ChatVoice = () => {
   const [language, setLanguage] = useState('en');
 
   const voices = [
-    { name: 'Alloy', id: 'alloy' },
-    { name: 'Echo', id: 'echo' },
-    { name: 'Fable', id: 'fable' },
-    { name: 'Onyx', id: 'onyx' },
-    { name: 'Nova', id: 'nova' },
-    { name: 'Shimmer', id: 'shimmer' }
+    { name: 'Alloy', id: 'alloy', gender: 'male' },
+    { name: 'Echo', id: 'echo', gender: 'male' },
+    { name: 'Fable', id: 'fable', gender: 'female' },
+    { name: 'Onyx', id: 'onyx', gender: 'male' },
+    { name: 'Nova', id: 'nova', gender: 'female' },
+    { name: 'Shimmer', id: 'shimmer', gender: 'female' }
   ];
 
   const languages = [
@@ -27,12 +27,50 @@ const ChatVoice = () => {
   const handleGenerateVoice = async () => {
     setLoading(true);
     try {
+      // Appeler l'API de correction grammaticale
+      const correctionResponse = await fetch('/api/correctText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, language }),
+      });
+
+      const correctionData = await correctionResponse.json();
+      const correctedText = correctionData.correctedText;
+
+      // Appeler l'API de synthèse vocale avec le texte corrigé
       const response = await fetch('/api/generateVoice', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text, voice, language })
+        body: JSON.stringify({ text: correctedText, voice, language }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate voice');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+    } catch (error) {
+      console.error('Erreur de synthèse vocale:', error);
+    }
+    setLoading(false);
+  };
+
+  const playSample = async (sampleVoice) => {
+    setLoading(true);
+    try {
+      const sampleText = "Voici un exemple de voix pour tester.";
+      const response = await fetch('/api/generateVoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: sampleText, voice: sampleVoice, language }),
       });
 
       if (!response.ok) {
@@ -78,6 +116,32 @@ const ChatVoice = () => {
           Votre navigateur ne supporte pas l&apos;élément audio.
         </audio>
       )}
+
+      <div className="mt-8">
+        <h3 className="text-xl text-white mb-4">Échantillons de voix</h3>
+        <div className="flex flex-wrap gap-4">
+          {voices.filter(v => v.gender === 'male').map((v) => (
+            <button
+              key={v.id}
+              onClick={() => playSample(v.id)}
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              disabled={loading}
+            >
+              {v.name} (Masculin)
+            </button>
+          ))}
+          {voices.filter(v => v.gender === 'female').map((v) => (
+            <button
+              key={v.id}
+              onClick={() => playSample(v.id)}
+              className="p-2 bg-pink-500 text-white rounded hover:bg-pink-600"
+              disabled={loading}
+            >
+              {v.name} (Féminin)
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
