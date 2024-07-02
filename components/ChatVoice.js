@@ -19,6 +19,8 @@ const ChatVoice = () => {
           if (data.voices.length > 0) {
             setVoice(data.voices[0].id);
           }
+        } else {
+          console.error('Failed to fetch voices:', data.message);
         }
       } catch (error) {
         console.error('Erreur lors de la récupération des voix:', error);
@@ -63,7 +65,7 @@ const ChatVoice = () => {
     }
   };
 
-  const playSample = async (sampleUrl) => {
+  const playSample = (sampleUrl) => {
     setLoading(true);
     setAudioUrl('');
     setAudioUrl(sampleUrl);
@@ -119,6 +121,7 @@ const ChatVoice = () => {
           autoPlay
           onLoadStart={() => setLoading(true)}
           onCanPlay={() => setLoading(false)}
+          onError={() => setLoading(false)}
         >
           Votre navigateur ne supporte pas l&apos;élément audio.
         </audio>
