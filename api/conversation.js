@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import { handleUserInput } from '../utils/conversationManager';
+import { GlobalStateContext } from '../context/GlobalStateContext';
 
 dotenv.config();
 
@@ -78,8 +79,15 @@ export default async function handler(req, res) {
   console.log(`Sending request to OpenAI with prompt: ${prompt}`);
 
   try {
-    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes, { plans, setPlans, selectedPlan, setSelectedPlan });
-    res.status(200).json({ response, nextStep: step + 1, options, plans, selectedPlan });
+    const context = {
+      plans: plans || [],
+      setPlans: (newPlans) => { plans.push(...newPlans); }, // Mock setPlans
+      selectedPlan: selectedPlan || null,
+      setSelectedPlan: (newPlan) => { selectedPlan = newPlan; } // Mock setSelectedPlan
+    };
+
+    const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes, context);
+    res.status(200).json({ response, nextStep: step + 1, options, plans: context.plans, selectedPlan: context.selectedPlan });
   } catch (error) {
     console.error('Erreur de communication avec OpenAI:', error);
     res.status(500).json({ message: 'Erreur de communication avec OpenAI' });
