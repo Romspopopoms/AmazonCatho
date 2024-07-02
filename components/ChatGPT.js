@@ -114,30 +114,13 @@ const ChatGPT = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
-      <ConversationsList
-        conversations={conversations}
-        currentConversation={currentConversation}
-        onAddConversation={startNewConversation}
-        onDeleteConversation={deleteConversation}
-        onSelectConversation={selectConversation}
-      />
-      <div className="flex-1 flex flex-col p-4">
-        <div className="flex items-center mb-4">
-          <label className="mr-2 text-white">Catégorie:</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="">Sélectionnez une catégorie</option>
-            <option value="Création de planning de contenu sur 1 mois">Création de planning de contenu sur 1 mois</option>
-            <option value="Campagne de promotion de produit">Campagne de promotion de produit</option>
-            <option value="Développement de la marque personnelle">Développement de la marque personnelle</option>
-            <option value="Engagement et interaction avec l'audience">Engagement et interaction avec l&apos;audience</option>
-            <option value="Analyse et optimisation des performances">Analyse et optimisation des performances</option>
-            <option value="Création de contenu saisonnier">Création de contenu saisonnier</option>
-          </select>
+    <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white">
+      <div className="w-1/4 p-4 border-r border-gray-700 mt-16">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Conversations</h2>
+          <button onClick={startNewConversation} className="text-blue-500 hover:text-blue-600">
+            <FontAwesomeIcon icon={faPlus} size="lg" />
+          </button>
         </div>
         <div className="flex items-center mb-4">
           <label className="mr-2 text-white">Plateforme:</label>
