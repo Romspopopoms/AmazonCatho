@@ -1,3 +1,5 @@
+// utils/conversationManager.js
+
 const { proposeContentPlan } = require('./conversationPlanning');
 
 const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes, context) => {

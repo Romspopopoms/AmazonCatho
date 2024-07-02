@@ -1,6 +1,8 @@
+// pages/api/conversation.js
+
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { handleUserInput } from '../utils/conversationManager';
+import { handleUserInput } from '../../utils/conversationManager';
 
 dotenv.config();
 
@@ -80,9 +82,9 @@ export default async function handler(req, res) {
   try {
     const context = {
       plans: plans || [],
-      setPlans: (newPlans) => { plans.push(...newPlans); }, // Mock setPlans
+      setPlans: (newPlans) => { context.plans.push(...newPlans); }, // Mock setPlans
       selectedPlan: selectedPlan || null,
-      setSelectedPlan: (newPlan) => { selectedPlan = newPlan; } // Mock setSelectedPlan
+      setSelectedPlan: (newPlan) => { context.selectedPlan = newPlan; } // Mock setSelectedPlan
     };
 
     const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes, context);
