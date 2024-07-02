@@ -1,9 +1,7 @@
 import { proposeContentPlan } from './conversationPlanning';
 
-export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = []) => {
+export const handleUserInput = async (userId, userInput, step, platform, category, profile, excludedTypes = [], plans, setPlans, selectedPlan, setSelectedPlan) => {
   let response;
-  let plans;
-  let selectedPlan;
   let planDetails;
   let options = [];
 
@@ -21,9 +19,10 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
     case 3:
       const objective = userInput.toLowerCase().includes('notoriété') ? 'notoriety' : 'engagement';
       console.log(`Objective determined: ${objective}`);
-      plans = proposeContentPlan(platform, objective, excludedTypes);
-      console.log(`Plans found: ${JSON.stringify(plans)}`);
-      if (!plans || plans.length === 0) {
+      const proposedPlans = proposeContentPlan(platform, objective, excludedTypes);
+      setPlans(proposedPlans); // Stocker les plans dans le contexte global
+      console.log(`Plans found: ${JSON.stringify(proposedPlans)}`);
+      if (!proposedPlans || proposedPlans.length === 0) {
         response = `Désolé, je n'ai pas trouvé de plans pour la plateforme ${platform} avec l'objectif ${category}. Pouvez-vous choisir une autre option ?`;
         options = ['Augmenter la notoriété', 'Améliorer l\'engagement'];
         break;
@@ -33,15 +32,16 @@ export const handleUserInput = async (userId, userInput, step, platform, categor
       break;
     case 4:
       const frequency = userInput.toLowerCase();
-      selectedPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
-      console.log(`Selected plan: ${JSON.stringify(selectedPlan)}`);
-      if (!selectedPlan) {
+      const chosenPlan = plans.find(plan => plan.name.toLowerCase().includes(frequency));
+      setSelectedPlan(chosenPlan); // Stocker le plan sélectionné dans le contexte global
+      console.log(`Selected plan: ${JSON.stringify(chosenPlan)}`);
+      if (!chosenPlan) {
         response = `Désolé, je n'ai pas trouvé de plan correspondant à votre choix. Pouvez-vous choisir une autre option ?`;
         options = ['Intensif', 'Modéré', 'Léger'];
         break;
       }
-      response = `Vous avez choisi le ${selectedPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
-                 selectedPlan.content.map(item => `- ${item.day || item.week}: ${item.type} - ${item.details}`).join('\n') +
+      response = `Vous avez choisi le ${chosenPlan.name}. Voici le détail du plan de contenu pour ${platform}:\n\n` +
+                 chosenPlan.content.map(item => `- ${item.day || item.week}: ${item.type} - ${item.details}`).join('\n') +
                  `\n\nVoulez-vous générer les descriptions et les hashtags pour ces publications?`;
       options = ['Oui', 'Non'];
       break;

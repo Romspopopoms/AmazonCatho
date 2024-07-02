@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
+import { GlobalStateContext } from '../context/GlobalStateContext';
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext);
   const [input, setInput] = useState('');
   const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
@@ -76,6 +78,11 @@ const ChatGPT = () => {
       updatedConversations[currentConversation] = [...updatedMessages, botMessage];
       setConversations(updatedConversations);
       setOptions(data.options || []);
+
+      // Mettre à jour les plans et le plan sélectionné dans le contexte global
+      if (data.plans) setPlans(data.plans);
+      if (data.selectedPlan) setSelectedPlan(data.selectedPlan);
+
     } catch (error) {
       console.error('Erreur de communication avec ChatGPT:', error);
     } finally {
