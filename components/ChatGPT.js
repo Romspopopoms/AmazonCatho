@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
-import { GlobalStateContext } from '../context/GlobalStateContext'; // Importer le contexte global
+import { GlobalStateContext } from '../context/GlobalStateContext';
 import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
-  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext); // Utiliser le contexte global
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext);
   const [input, setInput] = useState('');
   const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
