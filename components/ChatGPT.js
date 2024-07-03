@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
 import { GlobalStateContext } from '../context/GlobalStateContext';
-import ConversationsList from './ConversationsList';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
@@ -20,7 +19,6 @@ const ChatGPT = () => {
   useEffect(() => {
     if (profile) {
       console.log('Profile received:', profile);
-
       const introMessage = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setConversations([[{ role: 'bot', content: introMessage }]]);
     }
@@ -50,7 +48,16 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile, plans, selectedPlan }),
+        body: JSON.stringify({
+          message: input,
+          platform,
+          category,
+          messages: updatedMessages,
+          step: updatedMessages.length,
+          profile,
+          plans,
+          selectedPlan,
+        }),
       });
 
       if (!response.ok) {
@@ -134,6 +141,22 @@ const ChatGPT = () => {
             <option value="TikTok">TikTok</option>
             <option value="Facebook">Facebook</option>
             <option value="LinkedIn">LinkedIn</option>
+          </select>
+        </div>
+        <div className="flex items-center mb-4">
+          <label className="mr-2 text-white">Catégorie:</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
+          >
+            <option value="">Sélectionnez une catégorie</option>
+            <option value="plan_post_mois">Plan de post pour un mois</option>
+            <option value="plan_post_semaine">Plan de post pour une semaine</option>
+            <option value="mettre_en_avant_produit">Mettre en avant un produit</option>
+            <option value="augmenter_visibilite">Augmenter la visibilité</option>
+            <option value="generer_engagement">Générer de l&apos;engagement</option>
+            <option value="developper_audience">Développer l&apos;audience</option>
           </select>
         </div>
         {categoryError && <p className="text-red-500 mb-4">{categoryError}</p>}
