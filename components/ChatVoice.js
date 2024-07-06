@@ -7,17 +7,24 @@ const ChatVoice = () => {
   const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
   const [voices, setVoices] = useState([]);
+  const [responseFormat, setResponseFormat] = useState('mp3');
+  const [speed, setSpeed] = useState(1.0);
+  
+  const responseFormats = ['mp3', 'opus', 'aac', 'flac', 'wav', 'pcm'];
 
   useEffect(() => {
+    const validVoices = ['nova', 'shimmer', 'echo', 'onyx', 'fable', 'alloy'];
     const fetchVoices = async () => {
       try {
         const response = await fetch('/api/getVoices');
         const data = await response.json();
         if (data.success) {
-          setVoices(data.voices);
+          // Filtrer les voix pour n'inclure que celles qui sont valides
+          const filteredVoices = data.voices.filter(v => validVoices.includes(v.name));
+          setVoices(filteredVoices);
           // Set default voice if not set
-          if (data.voices.length > 0) {
-            setVoice(data.voices[0].id);
+          if (filteredVoices.length > 0) {
+            setVoice(filteredVoices[0].name);
           }
         }
       } catch (error) {
@@ -47,7 +54,7 @@ const ChatVoice = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: correctedText, voice, language }),
+        body: JSON.stringify({ text: correctedText, voice, language, response_format: responseFormat, speed }),
       });
 
       if (!response.ok) {
@@ -85,6 +92,21 @@ const ChatVoice = () => {
           <option key={lang} value={lang}>{lang}</option>
         ))}
       </select>
+      <select value={responseFormat} onChange={(e) => setResponseFormat(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
+        {responseFormats.map((format) => (
+          <option key={format} value={format}>{format}</option>
+        ))}
+      </select>
+      <input
+        type="number"
+        value={speed}
+        onChange={(e) => setSpeed(parseFloat(e.target.value))}
+        step="0.1"
+        min="0.25"
+        max="4.0"
+        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
+        placeholder="Vitesse (0.25 à 4.0)"
+      />
       <button
         onClick={handleGenerateVoice}
         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
