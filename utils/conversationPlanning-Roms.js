@@ -305,6 +305,7 @@ const platforms = {
   }
 };
 
+
 const filterContentTypes = (content, excludedTypes) => {
   return content.filter(item => !excludedTypes.includes(item.type));
 };
@@ -314,7 +315,7 @@ const proposeContentPlan = (platform, objective, excludedTypes = []) => {
   const plans = platforms[platform] && platforms[platform][objective];
   if (!plans) {
     console.log('No plans found for given platform and objective.');
-    return null;
+    return [];
   }
 
   const filteredPlans = plans.map(plan => {
@@ -330,4 +331,4 @@ const proposeContentPlan = (platform, objective, excludedTypes = []) => {
   return filteredPlans;
 };
 
-export { proposeContentPlan };
+module.exports = { proposeContentPlan };
