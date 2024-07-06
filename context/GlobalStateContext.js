@@ -4,7 +4,7 @@ const { createContext, useState } = React;
 const GlobalStateContext = createContext();
 
 const GlobalStateProvider = ({ children }) => {
-  const [plans, setPlans] = useState(null);
+  const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   return (

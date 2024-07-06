@@ -2,12 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../context/UserProfileContext';
-import { GlobalStateContext } from '../context/GlobalStateContext'; // Importer le contexte global
-import ConversationsList from './ConversationsList';
+import { GlobalStateContext } from '../context/GlobalStateContext';
 
 const ChatGPT = () => {
   const { profile } = useUserProfile();
-  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext); // Utiliser le contexte global
+  const { plans, setPlans, selectedPlan, setSelectedPlan } = useContext(GlobalStateContext);
   const [input, setInput] = useState('');
   const [category, setCategory] = useState('');
   const [platform, setPlatform] = useState('');
@@ -20,7 +19,6 @@ const ChatGPT = () => {
   useEffect(() => {
     if (profile) {
       console.log('Profile received:', profile);
-
       const introMessage = `Bonjour ${profile.name}! Sur quelle plateforme souhaitez-vous créer du contenu aujourd'hui ?`;
       setConversations([[{ role: 'bot', content: introMessage }]]);
     }
@@ -50,7 +48,16 @@ const ChatGPT = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input, platform, category, messages: updatedMessages, step: updatedMessages.length, profile, plans, selectedPlan }),
+        body: JSON.stringify({
+          message: input,
+          platform,
+          category,
+          messages: updatedMessages,
+          step: updatedMessages.length,
+          profile,
+          plans,
+          selectedPlan,
+        }),
       });
 
       if (!response.ok) {
@@ -114,44 +121,45 @@ const ChatGPT = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white pt-16 font-sans">
-      <ConversationsList
-        conversations={conversations}
-        currentConversation={currentConversation}
-        onAddConversation={startNewConversation}
-        onDeleteConversation={deleteConversation}
-        onSelectConversation={selectConversation}
-      />
-      <div className="flex-1 flex flex-col p-4">
-        <div className="flex items-center mb-4">
-          <label className="mr-2 text-white">Catégorie:</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="">Sélectionnez une catégorie</option>
-            <option value="Création de planning de contenu sur 1 mois">Création de planning de contenu sur 1 mois</option>
-            <option value="Campagne de promotion de produit">Campagne de promotion de produit</option>
-            <option value="Développement de la marque personnelle">Développement de la marque personnelle</option>
-            <option value="Engagement et interaction avec l'audience">Engagement et interaction avec l&apos;audience</option>
-            <option value="Analyse et optimisation des performances">Analyse et optimisation des performances</option>
-            <option value="Création de contenu saisonnier">Création de contenu saisonnier</option>
-          </select>
+    <div className="flex h-screen bg-gradient-to-r from-gray-700 via-gray-900 to-black text-white">
+      <div className="flex flex-col w-3/4 p-4 overflow-hidden">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Conversations</h2>
+          <button onClick={startNewConversation} className="text-blue-500 hover:text-blue-600">
+            <FontAwesomeIcon icon={faPlus} size="lg" />
+          </button>
         </div>
-        <div className="flex items-center mb-4">
-          <label className="mr-2 text-white">Plateforme:</label>
-          <select
-            value={platform}
-            onChange={(e) => setPlatform(e.target.value)}
-            className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
-          >
-            <option value="">Sélectionnez une plateforme</option>
-            <option value="Instagram">Instagram</option>
-            <option value="TikTok">TikTok</option>
-            <option value="Facebook">Facebook</option>
-            <option value="LinkedIn">LinkedIn</option>
-          </select>
+        <div className="flex mb-4">
+          <div className="flex items-center mr-4">
+            <label className="mr-2 text-white">Plateforme:</label>
+            <select
+              value={platform}
+              onChange={(e) => setPlatform(e.target.value)}
+              className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
+            >
+              <option value="">Sélectionnez une plateforme</option>
+              <option value="Instagram">Instagram</option>
+              <option value="TikTok">TikTok</option>
+              <option value="Facebook">Facebook</option>
+              <option value="LinkedIn">LinkedIn</option>
+            </select>
+          </div>
+          <div className="flex items-center">
+            <label className="mr-2 text-white">Catégorie:</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="p-2 bg-gray-900 text-white border border-gray-600 rounded"
+            >
+              <option value="">Sélectionnez une catégorie</option>
+              <option value="plan_post_mois">Plan de post pour un mois</option>
+              <option value="plan_post_semaine">Plan de post pour une semaine</option>
+              <option value="mettre_en_avant_produit">Mettre en avant un produit</option>
+              <option value="augmenter_visibilite">Augmenter la visibilité</option>
+              <option value="generer_engagement">Générer de l&apos;engagement</option>
+              <option value="developper_audience">Développer l&apos;audience</option>
+            </select>
+          </div>
         </div>
         {categoryError && <p className="text-red-500 mb-4">{categoryError}</p>}
         <div className="flex-1 bg-gray-800 p-4 rounded-lg mb-4 overflow-y-auto">
@@ -200,7 +208,7 @@ const ChatGPT = () => {
         </form>
       </div>
       {profile && (
-        <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900">
+        <div className="w-1/4 p-4 border-l border-gray-700 bg-gray-900 overflow-y-auto">
           <h2 className="text-xl font-bold text-white mb-4">Profil Utilisateur</h2>
           <p className="text-white mb-2"><strong>Nom:</strong> {profile.name}</p>
           <p className="text-white mb-2"><strong>Type d&apos;activité:</strong> {profile.activityType}</p>

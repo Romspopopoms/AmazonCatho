@@ -29,7 +29,11 @@ const handleUserInput = async (userId, userInput, step, platform, category, prof
           break;
         }
         setPlans(proposedPlans); // Met à jour les plans dans le contexte global
+<<<<<<< HEAD
         console.log(`Updated Plans: ${JSON.stringify(plans)}`);
+=======
+        console.log(`Updated Plans: ${JSON.stringify(proposedPlans)}`);
+>>>>>>> b8f93af823bb8640d223dc6906693fd59df91f44
         response = `Pour atteindre votre objectif de ${userInput}, combien de posts souhaitez-vous par semaine ? Choisissez entre 'Intensif' (1 par jour), 'Modéré' (2-3 par semaine) ou 'Léger' (1 par semaine).`;
         options = ['Intensif', 'Modéré', 'Léger'];
         break;

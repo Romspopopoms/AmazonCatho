@@ -35,8 +35,7 @@ const createPrompt = (messages, platform, category, step, profile) => {
   const preferredPlatforms = parseIfNeeded(profile.preferredPlatforms);
   const contentTypes = parseIfNeeded(profile.contentTypes);
 
-  return `
-  You are a social media content creator specialized in creating engaging content for various social media platforms. Tailor your advice to the selected category and the client's needs.
+  return `You are a social media content creator specialized in creating engaging content for various social media platforms. Tailor your advice to the selected category and the client's needs.
 
   Profile Information:
   - Name: ${profile.name}
@@ -62,8 +61,7 @@ const createPrompt = (messages, platform, category, step, profile) => {
 
   Current Step: ${step}
 
-  Based on the current step and the client's responses, continue the conversation by providing a concrete suggestion or asking a targeted question.
-`;
+  Based on the current step and the client's responses, continue the conversation by providing a concrete suggestion or asking a targeted question.`;
 };
 
 export default async function handler(req, res) {
@@ -80,9 +78,9 @@ export default async function handler(req, res) {
   try {
     const context = {
       plans: plans || [],
-      setPlans: (newPlans) => { plans.push(...newPlans); }, // Mock setPlans
+      setPlans: (newPlans) => { context.plans.push(...newPlans); }, // Mock setPlans
       selectedPlan: selectedPlan || null,
-      setSelectedPlan: (newPlan) => { selectedPlan = newPlan; } // Mock setSelectedPlan
+      setSelectedPlan: (newPlan) => { context.selectedPlan = newPlan; } // Mock setSelectedPlan
     };
 
     const { response, options } = await handleUserInput(profile.id, message, step, platform, category, profile, excludedTypes, context);
