@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 const ChatVoice = () => {
   const [text, setText] = useState('');
@@ -7,22 +7,18 @@ const ChatVoice = () => {
   const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
   const [voices, setVoices] = useState([]);
-  const [responseFormat, setResponseFormat] = useState('mp3');
-  const [speed, setSpeed] = useState(1.0);
-  
-  const responseFormats = ['mp3', 'opus', 'aac', 'flac', 'wav', 'pcm'];
+  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+
+  const validVoices = useMemo(() => ['nova', 'shimmer', 'echo', 'onyx', 'fable', 'alloy'], []);
 
   useEffect(() => {
-    const validVoices = ['nova', 'shimmer', 'echo', 'onyx', 'fable', 'alloy'];
     const fetchVoices = async () => {
       try {
         const response = await fetch('/api/getVoices');
         const data = await response.json();
         if (data.success) {
-          // Filtrer les voix pour n'inclure que celles qui sont valides
           const filteredVoices = data.voices.filter(v => validVoices.includes(v.name));
           setVoices(filteredVoices);
-          // Set default voice if not set
           if (filteredVoices.length > 0) {
             setVoice(filteredVoices[0].name);
           }
@@ -33,7 +29,7 @@ const ChatVoice = () => {
     };
 
     fetchVoices();
-  }, []);
+  }, [validVoices]);
 
   const handleGenerateVoice = async () => {
     setLoading(true);
@@ -54,7 +50,7 @@ const ChatVoice = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: correctedText, voice, language, response_format: responseFormat, speed }),
+        body: JSON.stringify({ text: correctedText, voice, language }),
       });
 
       if (!response.ok) {
@@ -92,21 +88,6 @@ const ChatVoice = () => {
           <option key={lang} value={lang}>{lang}</option>
         ))}
       </select>
-      <select value={responseFormat} onChange={(e) => setResponseFormat(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
-        {responseFormats.map((format) => (
-          <option key={format} value={format}>{format}</option>
-        ))}
-      </select>
-      <input
-        type="number"
-        value={speed}
-        onChange={(e) => setSpeed(parseFloat(e.target.value))}
-        step="0.1"
-        min="0.25"
-        max="4.0"
-        className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full"
-        placeholder="Vitesse (0.25 à 4.0)"
-      />
       <button
         onClick={handleGenerateVoice}
         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -115,9 +96,22 @@ const ChatVoice = () => {
         {loading ? 'Chargement...' : 'Générer Voix'}
       </button>
       {audioUrl && (
-        <audio controls src={audioUrl} className="mt-4">
-          Votre navigateur ne supporte pas l&apos;élément audio.
-        </audio>
+        <div className="mt-4">
+          <audio controls src={audioUrl} playbackRate={playbackSpeed} className="w-full">
+            Votre navigateur ne supporte pas l&apos;élément audio.
+          </audio>
+          <div className="mt-2 flex gap-2">
+            {[1.0, 1.5, 2.0].map(speed => (
+              <button
+                key={speed}
+                onClick={() => setPlaybackSpeed(speed)}
+                className={`p-2 rounded ${playbackSpeed === speed ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
+              >
+                {speed}x
+              </button>
+            ))}
+          </div>
+        </div>
       )}
 
       <div className="mt-8">
