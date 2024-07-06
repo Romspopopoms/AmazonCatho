@@ -23,6 +23,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log(`Generating voice for text: ${text}, voice: ${voice}, language: ${language}`);
+    
     const response = await openai.audio.speech.create({
       model: 'tts-1-hd',
       voice,

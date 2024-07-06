@@ -17,7 +17,7 @@ const ChatVoice = () => {
         if (data.success) {
           setVoices(data.voices);
           if (data.voices.length > 0) {
-            setVoice(data.voices[0].id);
+            setVoice(data.voices[0].name);
           }
         }
       } catch (error) {
@@ -31,6 +31,8 @@ const ChatVoice = () => {
   const handleGenerateVoice = async () => {
     setLoading(true);
     try {
+      console.log(`Generating voice with text: ${text}, voice: ${voice}, language: ${language}`);
+      
       const correctionResponse = await fetch('/api/correctText', {
         method: 'POST',
         headers: {
@@ -51,7 +53,8 @@ const ChatVoice = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate voice');
+        const errorText = await response.text();
+        throw new Error(`Failed to generate voice: ${errorText}`);
       }
 
       const blob = await response.blob();
