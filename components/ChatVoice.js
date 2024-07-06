@@ -7,6 +7,7 @@ const ChatVoice = () => {
   const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('en');
   const [voices, setVoices] = useState([]);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
 
   useEffect(() => {
     const fetchVoices = async () => {
@@ -15,7 +16,6 @@ const ChatVoice = () => {
         const data = await response.json();
         if (data.success) {
           setVoices(data.voices);
-          // Set default voice if not set
           if (data.voices.length > 0) {
             setVoice(data.voices[0].id);
           }
@@ -77,7 +77,7 @@ const ChatVoice = () => {
       />
       <select value={voice} onChange={(e) => setVoice(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
         {voices.map((v) => (
-          <option key={v.id} value={v.id}>{v.name}</option>
+          <option key={v.id} value={v.name}>{v.name}</option>
         ))}
       </select>
       <select value={language} onChange={(e) => setLanguage(e.target.value)} className="p-2 bg-gray-900 text-white border border-gray-600 rounded w-full">
@@ -93,9 +93,22 @@ const ChatVoice = () => {
         {loading ? 'Chargement...' : 'Générer Voix'}
       </button>
       {audioUrl && (
-        <audio controls src={audioUrl} className="mt-4">
-          Votre navigateur ne supporte pas l&apos;élément audio.
-        </audio>
+        <div className="mt-4">
+          <audio controls src={audioUrl} playbackRate={playbackSpeed} className="w-full">
+            Votre navigateur ne supporte pas l&apos;élément audio.
+          </audio>
+          <div className="mt-2 flex gap-2">
+            {[1.0, 1.5, 2.0].map(speed => (
+              <button
+                key={speed}
+                onClick={() => setPlaybackSpeed(speed)}
+                className={`p-2 rounded ${playbackSpeed === speed ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
+              >
+                {speed}x
+              </button>
+            ))}
+          </div>
+        </div>
       )}
 
       <div className="mt-8">
